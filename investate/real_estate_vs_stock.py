@@ -295,6 +295,8 @@ def compare_house_invest_vs_stock(equity,
         plt.plot(house_invest, label='house')
         plt.plot(down_payment_invest, label='stock')
         plt.legend()
+        plt.show()
+
     return house_invest, down_payment_invest
 
 
