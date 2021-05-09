@@ -17,7 +17,6 @@ def values_of_series_of_invest(invest_amounts,
     By default invest_at_begining_of_period is set to False meaning that each investment is made
     at the begining of the period and thus is not subject to the period growth.
 
-
     :param: invest_values, an iterable of invested values
     :param: rate_between_values, an iterable of rate of growth for the periods from one
                                  investment to the next
@@ -66,6 +65,7 @@ def values_of_series_of_invest(invest_amounts,
     else:
         return value_over_time
 
+
 def total_of_regular_investment(reg_invest_value, rate, n_periods):
     """
     A special case of total_of_series_of_invest, when the investements are constant and the rate
@@ -88,6 +88,7 @@ def total_of_regular_investment(reg_invest_value, rate, n_periods):
     else:
         factor = 1 + rate
         return reg_invest_value + reg_invest_value * (factor - factor ** n_periods) / (1 - factor)
+
 
 def compute_mortg_principal(loan_rate=0.04,
                             loan_amount=1000,
@@ -112,11 +113,11 @@ def compute_mortg_principal(loan_rate=0.04,
         period_rate_factor = 1 + loan_rate / n_payment_per_year
         n_periods = years_to_maturity * n_payment_per_year
 
-        # if we don't pay anything off, the loan amount increases following this function
+        # if we don't pay anything off, the loan amount increases after each month, following this function
         total_loan = loan_amount * period_rate_factor ** n_periods
 
-        # if we place a 1 unit every month at the same rate as the loan rate, this is what we get:
-        invest_value_factor = (period_rate_factor ** n_periods - 1) / (period_rate_factor - 1)
+        # if we place a 1 unit at the END of every month at the same rate as the loan rate, this is what we get:
+        invest_value_factor = total_of_regular_investment(1, period_rate_factor - 1, n_periods)
 
         # when the loan is paid off, P * invest_value_factor = total_loan so this is the monthly payment:
         return total_loan / invest_value_factor
@@ -202,7 +203,7 @@ def house_investment(mortg_rate=0.0275,
     """
     Compute two series, one returning the amount of equity and the second the monthly income
     (positive or negative) from renting the house. The income can then be used in the function
-    values_of_series_of_invest to emulate its investement in the stock market for example
+    values_of_series_of_invest to emulate its investment in the stock market for example
     """
 
     n_months_repay = mortgage_n_years * 12
@@ -282,7 +283,11 @@ def compare_house_invest_vs_stock(equity,
 
     # total house investment. Note that negative income are counted negatively, which
     # is ok since one could assume that the money spent would have been invested in stock otherwise
-    house_invest = [i[0] + i[1] for i in zip(equity, values_of_series_of_invest(monthly_income,
+
+    positive_monthly_income = [inc * int(inc > 0) for inc in monthly_income]
+    negative_monthly_income = [-inc * int(inc <= 0) for inc in monthly_income]
+
+    house_invest = [i[0] + i[1] for i in zip(equity, values_of_series_of_invest(positive_monthly_income,
                                                                                 [stock_market_month_rate] * len(
                                                                                     monthly_income),
                                                                                 final_only=False,
@@ -290,13 +295,44 @@ def compare_house_invest_vs_stock(equity,
     # the same initial investment in stock would yield
     down_payment_invest = [down_payment_perc * house_cost * (1 + stock_market_month_rate) ** i for i in
                            range(len(monthly_income))]
+    invested_negative_monthly_income = values_of_series_of_invest(negative_monthly_income,
+                                                                  [stock_market_month_rate] * len(
+                                                                      negative_monthly_income),
+                                                                  final_only=False,
+                                                                  invest_at_begining_of_period=False)
+    total_stock_market_invest = [i+j for (i, j) in zip(down_payment_invest, invested_negative_monthly_income)]
 
     if plot:
         plt.plot(house_invest, label='house')
-        plt.plot(down_payment_invest, label='stock')
-        plt.legend()
-        plt.show()
+    plt.plot(down_payment_invest, label='stock')
+    plt.legend()
+    plt.show()
 
-    return house_invest, down_payment_invest
+    return house_invest, total_stock_market_invest
 
 
+if __name__ == "__main__":
+    equity, monthly_income = house_investment(mortg_rate=0.265,
+                                              down_payment_perc=0.1,
+                                              house_cost=240000,
+                                              tax=6000,
+                                              insurance=4000,
+                                              repair=6000,
+                                              estate_rate=0.03,
+                                              mortgage_n_years=15,
+                                              n_years_after_pay_off=10,
+                                              monthly_rental_income=7500,
+                                              percentage_rented=0.5,
+                                              inflation_rate=0.02,
+                                              income_tax=0.36,
+                                              management_fees_rate=0.22,
+                                              plot=True)
+
+
+
+    house_invest, down_payment_invest = compare_house_invest_vs_stock(equity,
+                                                                      monthly_income,
+                                                                      stock_market_rate=0.08,
+                                                                      down_payment_perc=0.1,
+                                                                      house_cost=240000,
+                                                                      plot=False)
