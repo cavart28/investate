@@ -104,7 +104,7 @@ def compute_mortg_principal(loan_rate=0.04,
             interval. Typically this should be left to 12.
 
     >>> compute_mortg_principal(loan_amount=100000, loan_rate=0.025, years_to_maturity=15)
-    666.7892090089924
+    666.7892090089922
     """
 
     if loan_rate == 0:
@@ -117,7 +117,7 @@ def compute_mortg_principal(loan_rate=0.04,
         total_loan = loan_amount * period_rate_factor ** n_periods
 
         # if we place a 1 unit at the END of every month at the same rate as the loan rate, this is what we get:
-        invest_value_factor = total_of_regular_investment(1, period_rate_factor - 1, n_periods)
+        invest_value_factor = values_of_series_of_invest([1] * n_periods, [loan_rate / n_payment_per_year] * n_periods)
 
         # when the loan is paid off, P * invest_value_factor = total_loan so this is the monthly payment:
         return total_loan / invest_value_factor
@@ -228,15 +228,16 @@ def house_investment(mortg_rate=0.0275,
 
     # series of rental income
     rental_income = [monthly_rental_income * (1 - management_fees_rate) * percentage_rented
-                     * (1 - income_tax) * (1 + estate_rate / 12) ** i
+                     * (1 - income_tax) * (1 + estate_rate / 12) ** (i+1)
                      for i in range(n_total_months)]
     # series of monthly balance
     monthly_income = [i[0] - i[1] for i in zip(rental_income, total_cost_per_month)]
 
     # house values over time
-    house_value = [house_cost * (1 + estate_rate / 12) ** i for i in range(n_total_months)]
+    house_value = [house_cost * (1 + estate_rate / 12) ** (i+1) for i in range(n_total_months)]
+
     # if nothing were repaid, the loan would follow this
-    unrepaid_loan_remaining = [loan_amount * (1 + mortg_rate / 12) ** i for i in range(n_months_repay)]
+    unrepaid_loan_remaining = [loan_amount * (1 + mortg_rate / 12) ** (i+1) for i in range(n_months_repay)]
     # but we do repay, we can imagine we pay in a different account on the side
     repaid_total = values_of_series_of_invest([monthly_mort_payment] * n_months_repay,
                                               [mortg_rate / 12] * n_months_repay,
@@ -300,7 +301,7 @@ def compare_house_invest_vs_stock(equity,
                                                                       negative_monthly_income),
                                                                   final_only=False,
                                                                   invest_at_begining_of_period=False)
-    total_stock_market_invest = [i+j for (i, j) in zip(down_payment_invest, invested_negative_monthly_income)]
+    total_stock_market_invest = [i + j for (i, j) in zip(down_payment_invest, invested_negative_monthly_income)]
 
     if plot:
         plt.plot(house_invest, label='house')
@@ -312,7 +313,8 @@ def compare_house_invest_vs_stock(equity,
 
 
 if __name__ == "__main__":
-    equity, monthly_income = house_investment(mortg_rate=0.265,
+
+    equity, monthly_income = house_investment(mortg_rate=0.0265,
                                               down_payment_perc=0.1,
                                               house_cost=240000,
                                               tax=6000,
@@ -328,11 +330,3 @@ if __name__ == "__main__":
                                               management_fees_rate=0.22,
                                               plot=True)
 
-
-
-    house_invest, down_payment_invest = compare_house_invest_vs_stock(equity,
-                                                                      monthly_income,
-                                                                      stock_market_rate=0.08,
-                                                                      down_payment_perc=0.1,
-                                                                      house_cost=240000,
-                                                                      plot=False)

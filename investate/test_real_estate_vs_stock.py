@@ -17,6 +17,7 @@ def test_values_of_series_of_invest(invest_amounts, rate_between_amounts, final_
     (1, 10, 2, 10),
     (0.1, -100, 10, 1),
     (0.001, 10, 100, 3),
+    (0.265, 216000, 15, 12)
 ])
 def test_compute_mortg_principal(loan_rate, loan_amount, years_to_maturity, n_payment_per_year):
     principal = compute_mortg_principal(loan_rate, loan_amount, years_to_maturity, n_payment_per_year)
