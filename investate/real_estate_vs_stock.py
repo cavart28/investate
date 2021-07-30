@@ -166,7 +166,7 @@ def compute_equity_and_interest(loan_rate=0.025,
         interest_paid_over_time.append(interest_paid)
 
     if estate_growth_rate > 0:
-        equity_over_time = [equ * period_estate_growth_factor ** n_period for n_period, equ in
+        equity_over_time = [equ * period_estate_growth_factor ** (n_period+1) for n_period, equ in
                             enumerate(equity_over_time)]
 
     return equity_over_time, interest_paid_over_time
@@ -294,7 +294,7 @@ def compare_house_invest_vs_stock(equity,
                                                                                 final_only=False,
                                                                                 invest_at_begining_of_period=False))]
     # the same initial investment in stock would yield
-    down_payment_invest = [down_payment_perc * house_cost * (1 + stock_market_month_rate) ** i for i in
+    down_payment_invest = [down_payment_perc * house_cost * (1 + stock_market_month_rate) ** (i+1) for i in
                            range(len(monthly_income))]
     invested_negative_monthly_income = values_of_series_of_invest(negative_monthly_income,
                                                                   [stock_market_month_rate] * len(
