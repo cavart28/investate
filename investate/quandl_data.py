@@ -1,10 +1,7 @@
 import quandl
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from ta import add_all_ta_features
-from ta.utils import dropna
-import cloudpickle as pickle
+
 
 ticks_dicts = {'btc': {'tick': 'BCHARTS/BITSTAMPUSD', 'data_cols': ['Close', 'Volume (BTC)']},
                'eth': {'tick': 'BITFINEX/ETHUSD', 'data_cols': ['Last']},
@@ -67,9 +64,6 @@ def make_df_from_ticks(api_key,
     df.fillna(method='bfill', axis=0, inplace=True)
 
     return df
-
-
-from sklearn.preprocessing import StandardScaler
 
 
 class divide_by_first:
