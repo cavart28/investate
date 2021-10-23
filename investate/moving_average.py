@@ -14,7 +14,7 @@ def moving_average(x, win):
     return np.convolve(x, window, 'valid') / len_win
 
 
-def get_comp_ma(series, ma_1, ma_2, plot=False):
+def get_comp_ma(series, ma_1, ma_2):
     # make ma_1 is always the smallest
     both = [ma_1, ma_2]
     both = np.sort(both)
@@ -25,13 +25,24 @@ def get_comp_ma(series, ma_1, ma_2, plot=False):
     cut_ma_series_1 = ma_series_1[offset:]
     cut_ma_series_2 = ma_series_2
 
-    if plot:
-        plt.plot(cut_ma_series_1, label=f'ma_{ma_1}')
-        plt.plot(cut_ma_series_2, label=f'ma_{ma_2}')
-        plt.plot(series[ma_2:], label=f'series')
-        plt.legend()
+    return {'ma_series_1': np.array(cut_ma_series_1),
+            'ma_series_2': np.array(cut_ma_series_2),
+            'cut_series': np.array(series[ma_2 - 1:]),
+            'ma_1': ma_1,
+            'ma_2': ma_2}
 
-    return np.array(cut_ma_series_1), np.array(cut_ma_series_2), np.array(series[ma_2 - 1:])
+def plot_mas(ma_series_1,
+             ma_series_2,
+             cut_series,
+             ma_1,
+             ma_2):
+    fig, ax = plt.subplots(nrows=1, ncols=1)
+
+    ax.plot(ma_series_1, label=f'ma_{ma_1}', linewidth=0.5)
+    ax.plot(ma_series_2, label=f'ma_{ma_2}', linewidth=0.5)
+    ax.plot(cut_series[ma_2:], label=f'series', linewidth=0.8)
+    ax.legend()
+    return fig, ax
 
 
 def moving_average_grid(series, ma_range=range(10)):
