@@ -30,11 +30,11 @@ if __name__ == "__main__":
     df = make_df_from_ticks(api_key=api_key,
                             ticks_dicts={'eth': {'tick': 'BITFINEX/ETHUSD', 'data_cols': ['Last']}})
     eth_series = df['eth_Last']
-
     a, b, c = get_comp_ma(eth_series, ma_1=40, ma_2=10, plot=False)
-    print(len(a), len(b), len(c))
-    # invest_func = invest_with_sma(ma_1=40, ma_2=10, thres_invest=0, thresh_devest=0)
-    # invest_period = list(invest_func(eth_series))
+    print(len(a))
+    invest_func = invest_with_sma(ma_1=40, ma_2=10, thres_invest=0, thresh_devest=0)
+    invest_period = list(invest_func(eth_series[9:]))
+    print(len(invest_period))
     #
 
 

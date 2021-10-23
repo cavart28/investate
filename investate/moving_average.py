@@ -5,7 +5,7 @@ from itertools import product
 
 
 def moving_average(x, win):
-    if isinstance(win, int):
+    if isinstance(win, (int, np.integer)):
         window = np.ones(win)
         len_win = win
     else:
@@ -17,11 +17,11 @@ def moving_average(x, win):
 def get_comp_ma(series, ma_1, ma_2, plot=False):
     # make ma_1 is always the smallest
     both = [ma_1, ma_2]
-    np.sort(both)
+    both = np.sort(both)
     ma_1, ma_2 = both
     ma_series_1 = moving_average(series, ma_1)
     ma_series_2 = moving_average(series, ma_2)
-    offset = ma_2 - ma_1
+    offset = np.abs(ma_2 - ma_1)
     cut_ma_series_1 = ma_series_1[offset:]
     cut_ma_series_2 = ma_series_2
 
