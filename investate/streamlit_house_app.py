@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from investate.investate.real_estate_vs_stock import house_investment, compare_house_invest_vs_stock
+from investate.real_estate_vs_stock import house_investment, compare_house_invest_vs_stock
 
 st.title('House vs other investment')
 

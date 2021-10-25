@@ -1,5 +1,5 @@
 import pytest
-from investate.investate.real_estate_vs_stock import *
+from investate.real_estate_vs_stock import *
 
 
 @pytest.mark.parametrize("invest_amounts,rate_between_amounts,final_only,invest_at_begining_of_period", [

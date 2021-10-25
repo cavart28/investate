@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import itertools
-from investate.investate.quandl_data import *
+from investate.quandl_data import *
 
 
 def moving_average(values, window_size, pad=True):

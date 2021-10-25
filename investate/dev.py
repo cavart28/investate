@@ -1,6 +1,6 @@
 if __name__ == "__main__":
 
-    from investate.investate.real_estate_vs_stock import *
+    from investate.real_estate_vs_stock import *
 
     # equity_over_time, interest_paid_over_time = compute_equity_and_interest(
     #     loan_rate=0.025,

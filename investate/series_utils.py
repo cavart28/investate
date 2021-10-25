@@ -139,8 +139,8 @@ def rebalance_A_to_B(A, B, target_relative_weight, transfer_fee):
 
 def investment_over_period(period_rates_A,
                            period_rates_B,
-                           fees_func_AB,
                            period_end_balance,
+                           fees_func_AB=None,
                            initial_investment_A=1,
                            initial_investment_B=0):
     """
@@ -156,7 +156,7 @@ def investment_over_period(period_rates_A,
 
     >>> period_rates_A = [0.05, 0.05, 0, 0]
     >>> period_rates_B = [0, 0, 0.05, 0.05]
-    >>> fees_func_AB = lambda x, y: 0 # no fees
+    >>> fees_func_AB = None # no fees
     >>> period_end_balance = [ 1, 0, 0, 0]
     >>> initial_investment_A = 1
     >>> initial_investment_B = 0
@@ -164,8 +164,14 @@ def investment_over_period(period_rates_A,
     (0.0, 1.2155062500000002)
     """
 
+    if fees_func_AB is None:
+        fees_func_AB = lambda x, y: 0
+
     total_A = initial_investment_A
     total_B = initial_investment_B
+
+    val_A = [total_A]
+    val_B = [total_B]
 
     for rate_A, rate_B, end_balance in zip(period_rates_A, period_rates_B, period_end_balance):
         # each investment grew during the period
@@ -175,7 +181,12 @@ def investment_over_period(period_rates_A,
         A_to_B = rebalance_A_to_B(total_A, total_B, end_balance, transfer_fee=fees_func_AB(total_A, total_B))
         total_A -= A_to_B
         total_B += A_to_B
-    return total_A, total_B
+
+        val_A.append(total_A)
+        val_B.append(total_B)
+
+
+    return val_A, val_B
 
 
 if __name__ == "__main__":
