@@ -92,11 +92,19 @@ def values_to_percent_growth(values):
     :return: another list, of length one less than values
 
     >>> rate = 0.05
-    >>> values = np.array([(1 + rate) ** i  for i in range(5)])
+    >>> n_periods = 5
+    >>> initial_investment = 100
+    >>> values = np.array([initial_investment * (1 + rate) ** i  for i in range(n_periods)])
     >>> values_to_percent_growth(values)
     array([0.05, 0.05, 0.05, 0.05])
-    """
 
+    Note that the intial investment is irrelevant, and that the number of rate of growth is 1 less than the number
+    of periods
+
+    >>> np.array([rate] * (n_periods - 1))
+    array([0.05, 0.05, 0.05, 0.05])
+
+    """
     values = np.array(values)
     shifted_values = np.roll(values, shift=-1)
     period_growth = shifted_values / values
@@ -109,9 +117,13 @@ def relative_weight(A, B):
 
 def rebalance_A_to_B(A, B, target_relative_weight, transfer_fee):
     """
-    We want to solve:
+    Say you want to rebalance two investments A and B so that the relative weight of A to B is the
+    target_relative_weight and transfering the money has a transfer fee proportional to the amount to transfer
+    with fixed rate transfer_fee
+
+    If transfer is the amount to move from A to B, we want to solve:
     (A - transfer) / (A - transfer + B + transfer * (1 - transfer_fee)) = target_relative_weight
-    which can be solved into:
+    which can be algebraicely written into the equivalent:
     transfer = (A - target_relative_weight * (A + B)) / (1 - target_relative_weight * transfer_fee)
 
     :param A: float, value of A
@@ -121,16 +133,23 @@ def rebalance_A_to_B(A, B, target_relative_weight, transfer_fee):
     :return: the amount to transfer from A to B to achieve the target_relative_weight
 
 
-    >>> # A and B are already balanced, nothing must be taken fomr A
+    A and B are already balanced, nothing must be taken fomr A
+
     >>> rebalance_A_to_B(10, 10, 0.5, 0)
     0.0
-    >>> # for A to be 25% of the total, we need to move 5 unit from A to B (assuming no transfer fee)
+
+    For A to be 25% of the total, we need to move 5 unit from A to B (assuming no transfer fee)
+
     >>> rebalance_A_to_B(10, 10, 0.25, 0)
     5.0
-    >>> # on the other hand, we need to GIVE to A to make A 0.75% of the total (still assuming no transfer fee)
+
+    On the other hand, we need to GIVE to A to make A 0.75% of the total (still assuming no transfer fee)
+
     >>> rebalance_A_to_B(10, 10, 0.75, 0)
     -5.0
-    >>> # example including a transfer fee
+
+    Example including a transfer fee, here we need to transfer a little more to cover for the fee
+
     >>> rebalance_A_to_B(10, 10, 0.25, 0.01)
     5.012531328320802
     """
@@ -157,11 +176,16 @@ def investment_over_period(period_rates_A,
     >>> period_rates_A = [0.05, 0.05, 0, 0]
     >>> period_rates_B = [0, 0, 0.05, 0.05]
     >>> fees_func_AB = None # no fees
-    >>> period_end_balance = [ 1, 0, 0, 0]
+    >>> period_end_balance = [1, 0, 0, 0]
     >>> initial_investment_A = 1
     >>> initial_investment_B = 0
-    >>> investment_over_period(period_rates_A, period_rates_B, fees_func_AB, period_end_balance, initial_investment_A, initial_investment_B)
-    (0.0, 1.2155062500000002)
+    >>> A, B = investment_over_period(period_rates_A, period_rates_B,
+    ...                               period_end_balance, fees_func_AB,
+    ...                               initial_investment_A, initial_investment_B)
+    >>> A
+    [1, 1.05, 0.0, 0.0, 0.0]
+    >>> B
+    [0, 0.0, 1.1025, 1.1576250000000001, 1.2155062500000002]
     """
 
     if fees_func_AB is None:
@@ -187,15 +211,3 @@ def investment_over_period(period_rates_A,
 
 
     return val_A, val_B
-
-
-if __name__ == "__main__":
-    period_rates_A = [0.05, 0.05, 0, 0]
-    period_rates_B = [0, 0, 0.05, 0.05]
-    fees_func_AB = lambda x, y: 0  # no fees
-    period_end_balance = [1, 0, 0, 0]
-    initial_investment_A = 1
-    initial_investment_B = 0
-    investment_over_period(period_rates_A, period_rates_B,
-                           fees_func_AB, period_end_balance,
-                           initial_investment_A, initial_investment_B)

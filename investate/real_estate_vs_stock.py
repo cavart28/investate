@@ -1,11 +1,29 @@
 """
 Tools to find the value over time of various investments, mainly to compare with real estate investment
+
+Example of use:
+
+from investate.real_estate_vs_stock import house_investment
+
+equity, monthly_income = house_investment(mortg_rate=0.0265,
+                                          down_payment_perc=0.1,
+                                          house_cost=240000,
+                                          tax=6000,
+                                          insurance=4000,
+                                          repair=6000,
+                                          estate_rate=0.03,
+                                          mortgage_n_years=15,
+                                          n_years_after_pay_off=10,
+                                          monthly_rental_income=7500,
+                                          percentage_rented=0.5,
+                                          inflation_rate=0.02,
+                                          income_tax=0.36,
+                                          management_fees_rate=0.22,
+                                          plot=True)
 """
 
-import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-
+from investate.series_utils import *
 
 
 def compute_mortg_principal(loan_rate=0.04,
@@ -230,21 +248,5 @@ def compare_house_invest_vs_stock(equity,
     return house_invest, total_stock_market_invest
 
 
-if __name__ == "__main__":
 
-    equity, monthly_income = house_investment(mortg_rate=0.0265,
-                                              down_payment_perc=0.1,
-                                              house_cost=240000,
-                                              tax=6000,
-                                              insurance=4000,
-                                              repair=6000,
-                                              estate_rate=0.03,
-                                              mortgage_n_years=15,
-                                              n_years_after_pay_off=10,
-                                              monthly_rental_income=7500,
-                                              percentage_rented=0.5,
-                                              inflation_rate=0.02,
-                                              income_tax=0.36,
-                                              management_fees_rate=0.22,
-                                              plot=True)
 

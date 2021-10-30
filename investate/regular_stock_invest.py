@@ -1,26 +1,15 @@
-import matplotlib.pyplot as plt
-import itertools
+"""
+Function to compute the total return of a stock by taking into account both the stock value and the dividend yield
+
+Example of use:
+
+growth_series = get_total_return_from_monthly_data(start_date='1980-03-25', end_date='2021-03-01')
+plt.plot(growth_series)
+plt.show()
+
+"""
+
 from investate.quandl_data import *
-
-
-def moving_average(values, window_size, pad=True):
-    values = iter(values)
-    first_window = list(itertools.islice(values, window_size - 1))
-
-    if pad:
-        for i in range(window_size - 1):
-            yield np.mean(first_window[:i + 1])
-    for value in values:
-        first_window.append(value)
-        if len(first_window) == window_size:
-            yield np.mean(first_window)
-            first_window = first_window[1:]
-
-
-def add_moving_average_col(df, col_name, window_size):
-    df[f'{col_name}_ma{window_size}'] = list(moving_average(df[col_name], window_size=window_size, pad=True))
-    df.columns = sorted(list(df.columns))
-    return df
 
 
 def get_total_return_from_monthly_data(price_tick={'tick': 'MULTPL/SP500_REAL_PRICE_MONTH', 'data_cols': ['Value']},
@@ -38,21 +27,3 @@ def get_total_return_from_monthly_data(price_tick={'tick': 'MULTPL/SP500_REAL_PR
     df['shift_price'] = df.price_Value.shift(1)
     growth_series = df['dividends_Value'] / (12 * 100) + df['price_Value'] / df['shift_price']
     return growth_series.iloc[1:]
-
-
-def get_investment_growth(amount, growth_series):
-    amount_per_months = [amount]
-    for month_rate in growth_series:
-        amount *= month_rate
-        amount_per_months.append(amount)
-    return amount_per_months
-
-
-if __name__ == '__main__':
-
-    growth_series = get_total_return_from_monthly_data(
-        start_date='1980-03-25',
-        end_date='2021-03-01')
-    invest_over_time = get_investment_growth(100, growth_series)
-    plt.plot(invest_over_time)
-    plt.show()
