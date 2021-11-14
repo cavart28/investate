@@ -85,7 +85,9 @@ def total_of_regular_investment(reg_invest_value, rate, n_periods):
 
     >>> total_of_regular_investment(10, 0, 5)
     50
-    # the investment is applied at the END of the period and thus does not benefit from its growth
+
+    The investment is applied at the END of the period and thus does not benefit from its growth
+
     >>> total_of_regular_investment(10, 0.01, 1)
     10.0
     >>> total_of_regular_investment(10, 0.01, 2)
