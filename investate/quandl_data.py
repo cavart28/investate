@@ -30,7 +30,6 @@ def make_df_from_ticks(api_key,
                        ticks_dicts=ticks_dicts,
                        start_date='2017-01-01',
                        end_date='2030-12-31',
-
                        verbose=False):
     """
     Make a df from the ticks in the ticks_list

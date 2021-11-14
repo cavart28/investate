@@ -1,8 +1,8 @@
 import numpy as np
 
 
-def values_of_series_of_invest(invest_amounts,
-                               rate_between_amounts,
+def values_of_series_of_invest(rate_between_amounts,
+                               invest_amounts=None,
                                final_only=True,
                                invest_at_begining_of_period=False):
     """
@@ -17,25 +17,32 @@ def values_of_series_of_invest(invest_amounts,
     :param: invest_at_begining_of_period, boolean, whether to invest at the begining of a period
             or the end.
 
-    >>> values_of_series_of_invest([1, 1], [0, 0])
+    # no growth, the result is just the sum of the amoun
+    >>> rate_between_amounts = (0, 0)
+    >>> invest_amounts = (1, 1)
+    >>> values_of_series_of_invest(rate_between_amounts, invest_amounts)
     2
     >>> # final_only controls whether to get the intermediate values
-    >>> values_of_series_of_invest([1, 1], [0, 0], final_only=False)
+    >>> values_of_series_of_invest(rate_between_amounts, invest_amounts, final_only=False)
     [1, 2]
     >>> # the first rate is not used by default, since the amounts are invested at the END of the period
-    >>> values_of_series_of_invest([1, 1], [0.05, 0], final_only=False)
+    >>> invest_amounts = (1, 1)
+    >>> rate_between_amounts = (0.05, 0)
+    >>> values_of_series_of_invest(rate_between_amounts, invest_amounts, final_only=False)
     [1.0, 2.0]
     >>> # this can be changed however, by setting invest_at_begining_of_period to True
-    >>> values_of_series_of_invest([1, 1], [0.05, 0], invest_at_begining_of_period=True, final_only=False)
+    >>> values_of_series_of_invest(rate_between_amounts, invest_amounts, final_only=False, invest_at_begining_of_period=True)
     [1.05, 2.05]
-    >>> values_of_series_of_invest([1, 1], [0.05, 0.08], invest_at_begining_of_period=True, final_only=False)
+    >>> invest_amounts = (1, 1)
+    >>> rate_between_amounts = (0.05, 0.08)
+    >>> values_of_series_of_invest(rate_between_amounts, invest_amounts, invest_at_begining_of_period=True, final_only=False)
     [1.05, 2.1340000000000003]
 
     # it can easily be used to get total invested value after several regular investments
     >>> n_years = 10
     >>> rate = 0.08
     >>> yearly_investment = 100
-    >>> values_of_series_of_invest([yearly_investment] * n_years, [rate] * n_years)
+    >>> values_of_series_of_invest(rate_between_amounts=[rate] * n_years, invest_amounts=[yearly_investment] * n_years)
     1448.656246590984
 
     # another application is to get the historical growth of a stock from one year to the next
@@ -43,7 +50,13 @@ def values_of_series_of_invest(invest_amounts,
 
     """
 
+    # if no invest amounts is given, it is assumed 1 unit is invested after the first period and nothing else
+    if invest_amounts is None:
+        invest_amounts = [1] + [0] * len(rate_between_amounts)
+
     if invest_at_begining_of_period:
+        invest_amounts = list(invest_amounts)
+        rate_between_amounts = list(rate_between_amounts)
         total = invest_amounts.pop(0) * (1 + rate_between_amounts.pop(0))
         value_over_time = [total]
     else:
@@ -82,7 +95,6 @@ def total_of_regular_investment(reg_invest_value, rate, n_periods):
     else:
         factor = 1 + rate
         return reg_invest_value + reg_invest_value * (factor - factor ** n_periods) / (1 - factor)
-
 
 
 def values_to_percent_growth(values):
@@ -133,7 +145,7 @@ def rebalance_A_to_B(A, B, target_relative_weight, transfer_fee):
     :return: the amount to transfer from A to B to achieve the target_relative_weight
 
 
-    A and B are already balanced, nothing must be taken fomr A
+    A and B are already balanced, nothing must be taken from A
 
     >>> rebalance_A_to_B(10, 10, 0.5, 0)
     0.0
@@ -150,8 +162,19 @@ def rebalance_A_to_B(A, B, target_relative_weight, transfer_fee):
 
     Example including a transfer fee, here we need to transfer a little more to cover for the fee
 
-    >>> rebalance_A_to_B(10, 10, 0.25, 0.01)
+    >>> a, b = 10, 10
+    >>> target_ratio = 0.25
+    >>> fee_percent = 0.01
+    >>> transfer_amount = rebalance_A_to_B(a, b, target_ratio, fee_percent)
+    >>> print(transfer_amount)
     5.012531328320802
+    >>> new_a = a - transfer_amount
+    >>> new_b = b + transfer_amount * (1 - fee_percent) # a portion of the transferred money is lost due to the fees
+    >>> new_ratio = new_a / (new_a + new_b)
+    >>> assert new_ratio == target_ratio
+    >>> print(new_ratio)
+    0.25
+
     """
     return (A - target_relative_weight * (A + B)) / (1 - target_relative_weight * transfer_fee)
 
@@ -173,10 +196,10 @@ def investment_over_period(period_rates_A,
     one more reason to take this simplified approach.
     The period_end_balance represents the desired "balance" between investment A and B at the END of the period.
 
-    >>> period_rates_A = [0.05, 0.05, 0, 0]
-    >>> period_rates_B = [0, 0, 0.05, 0.05]
+    >>> period_rates_A = (0.05, 0.05, 0, 0)
+    >>> period_rates_B = (0, 0, 0.05, 0.05)
     >>> fees_func_AB = None # no fees
-    >>> period_end_balance = [1, 0, 0, 0]
+    >>> period_end_balance = (1, 0, 0, 0)
     >>> initial_investment_A = 1
     >>> initial_investment_B = 0
     >>> A, B = investment_over_period(period_rates_A, period_rates_B,
@@ -186,6 +209,26 @@ def investment_over_period(period_rates_A,
     [1, 1.05, 0.0, 0.0, 0.0]
     >>> B
     [0, 0.0, 1.1025, 1.1576250000000001, 1.2155062500000002]
+
+    Playing the same scenario, with a 1% transfer fee
+
+    >>> fees_func_AB = lambda a, b: 0.01
+    >>> period_end_balance = (1, 0, 0, 0)
+    >>> initial_investment_A = 1
+    >>> initial_investment_B = 0
+    >>> A, B = investment_over_period(period_rates_A, period_rates_B,
+    ...                               period_end_balance, fees_func_AB,
+    ...                               initial_investment_A, initial_investment_B)
+
+    Before transfer, the amount on A is the same as in the no fee scenario above
+
+    >>> A
+    [1, 1.05, 0.0, 0.0, 0.0]
+
+    But once transfered to B, the amount now is less
+
+    >>> B
+    [0, 0.0, 1.091475, 1.14604875, 1.2033511875]
     """
 
     if fees_func_AB is None:
@@ -201,13 +244,12 @@ def investment_over_period(period_rates_A,
         # each investment grew during the period
         total_A = total_A * (1 + rate_A)
         total_B = total_B * (1 + rate_B)
-        # we want to rebalance from A to B (or from B to A)
+        # we want to re-balance from A to B (or from B to A)
         A_to_B = rebalance_A_to_B(total_A, total_B, end_balance, transfer_fee=fees_func_AB(total_A, total_B))
         total_A -= A_to_B
-        total_B += A_to_B
+        total_B += A_to_B * (1 - fees_func_AB(total_A, total_B))
 
         val_A.append(total_A)
         val_B.append(total_B)
-
 
     return val_A, val_B

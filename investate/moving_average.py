@@ -46,7 +46,6 @@ def chunker(iterable, chk_size, chk_step=1):
         d.extend(to_add)
 
 
-
 def moving_stats(series, chk_size, chk_step=1, chk_func=np.mean):
     """
     Compute the moving averages of the series (or moving stats more generally), where winsize is the size of the
@@ -98,9 +97,10 @@ def get_comp_ma(series, chk_size_1, chk_size_2, chk_step=1, chk_func_1=np.mean, 
 
     return {'stat_series_1': np.array(stat_series_1),
             'stat_series_2': np.array(stat_series_2),
-            'cut_series': np.array(series[chk_size_2-1:]),
+            'cut_series': np.array(series[chk_size_2 - 1:]),
             'chk_size_1': chk_size_1,
             'chk_size_2': chk_size_2}
+
 
 def plot_mas(stat_series_1,
              stat_series_2,

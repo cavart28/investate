@@ -53,7 +53,8 @@ def compute_mortg_principal(loan_rate=0.04,
         total_loan = loan_amount * period_rate_factor ** n_periods
 
         # if we place a 1 unit at the END of every month at the same rate as the loan rate, this is what we get:
-        invest_value_factor = values_of_series_of_invest([1] * n_periods, [loan_rate / n_payment_per_year] * n_periods)
+        invest_value_factor = values_of_series_of_invest([loan_rate / n_payment_per_year] * n_periods,
+                                                         [1] * n_periods)
 
         # when the loan is paid off, P * invest_value_factor = total_loan so this is the monthly payment:
         return total_loan / invest_value_factor
