@@ -76,6 +76,7 @@ class divide_by_first:
         self.date = date
 
     def fit_transform(self, series):
+        """Get first term and divide all by first"""
         if self.date:
             divisor = series.loc[self.date]
         else:
