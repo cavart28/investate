@@ -1,3 +1,5 @@
+"""Utils to get stock data from Quandl"""
+
 import quandl
 import numpy as np
 import pandas as pd
@@ -66,6 +68,9 @@ def make_df_from_ticks(api_key,
 
 
 class divide_by_first:
+    """
+    Get the period growths for an investment whose values over time are given in a series
+    """
 
     def __init__(self, date=None):
         self.date = date
@@ -80,6 +85,9 @@ class divide_by_first:
 
 
 def normalize_df(df, columns=None, method=divide_by_first):
+    """
+    Normalize the columns of a dataframe
+    """
     if columns is None:
         columns = df.columns
     scaler = method()

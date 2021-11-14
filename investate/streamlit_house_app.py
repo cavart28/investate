@@ -1,3 +1,7 @@
+"""
+Little streamlit app to help make decision on whether to invest in real estate vs stock market
+"""
+
 import streamlit as st
 import pandas as pd
 from investate.real_estate_vs_stock import house_investment, compare_house_invest_vs_stock

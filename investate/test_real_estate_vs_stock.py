@@ -1,3 +1,5 @@
+"""Tests for the module real_estate_vs_stock"""
+
 import pytest
 from investate.real_estate_vs_stock import *
 
@@ -7,6 +9,7 @@ from investate.real_estate_vs_stock import *
     ([0, 0], [0.2, 0.05], True, False),
 ])
 def test_values_of_series_of_invest(invest_amounts, rate_between_amounts, final_only, invest_at_begining_of_period):
+    """Testing that investing no money results in well, no money"""
     res = values_of_series_of_invest(invest_amounts, rate_between_amounts, final_only, invest_at_begining_of_period)
     assert res == 0
 
@@ -20,6 +23,10 @@ def test_values_of_series_of_invest(invest_amounts, rate_between_amounts, final_
     (0.265, 216000, 15, 12)
 ])
 def test_compute_mortg_principal(loan_rate, loan_amount, years_to_maturity, n_payment_per_year):
+    """
+    Test that the principal as computed by compute_mortg_principal does lead to full repayment in the expected
+    amount of time
+    """
     principal = compute_mortg_principal(loan_rate, loan_amount, years_to_maturity, n_payment_per_year)
     n_periods = n_payment_per_year * years_to_maturity
     reg_payment = values_of_series_of_invest(

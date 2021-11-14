@@ -17,6 +17,7 @@ def get_total_return_from_monthly_data(price_tick={'tick': 'MULTPL/SP500_REAL_PR
                                        start_date='1910-01-01',
                                        end_date='2021-03-01',
                                        remove_begining=True):
+    """Attempt at getting the full return of a stock if dividends are reinvested"""
     ticks_dicts = {'price': price_tick, 'dividends': dividend_tick}
     df = make_df_from_ticks(ticks_dicts=ticks_dicts,
                             start_date=start_date,

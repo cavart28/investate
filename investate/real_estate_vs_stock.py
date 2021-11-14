@@ -217,6 +217,9 @@ def compare_house_invest_vs_stock(equity,
                                   down_payment_perc=0.1,
                                   house_cost=240000,
                                   plot=True):
+    """
+    A util function to quickly get a comparison of investments, one in stock and the other in real estate
+    """
     stock_market_month_rate = stock_market_rate / 12
 
     # total house investment. Note that negative income are counted negatively, which

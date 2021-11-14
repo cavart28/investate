@@ -1,3 +1,7 @@
+"""
+Module containing some of the fundamental functions to compute value of investments over time
+"""
+
 import numpy as np
 
 
@@ -124,6 +128,7 @@ def values_to_percent_growth(values):
 
 
 def relative_weight(A, B):
+    """Formula should be speaking for itself!"""
     return A / (A + B)
 
 

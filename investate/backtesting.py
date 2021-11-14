@@ -120,6 +120,9 @@ def parameter_grid_search(series, max_chk_size):
 
 
 def plot_mat(mat):
+    """
+    Dirty little function to plot and compare the return for simple moving average strategies
+    """
     sns.set_theme(style="white")
 
     # Set up the matplotlib figure
