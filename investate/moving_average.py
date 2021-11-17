@@ -88,7 +88,12 @@ def moving_stats(series, chk_size, chk_step=1, chk_func=np.mean):
 
 
 def get_comp_ma(
-    series, chk_size_1, chk_size_2, chk_step=1, chk_func_1=np.mean, chk_func_2=np.mean
+    series,
+    chk_size_1,
+    chk_size_2,
+    chk_step=1,
+    chk_func_1=np.mean,
+    chk_func_2=np.mean,
 ):
     """
     Convenience function to compute and align the moving average of a series
@@ -104,7 +109,9 @@ def get_comp_ma(
         )
     )
     stat_series_2 = list(
-        moving_stats(series, chk_size_2, chk_step=chk_step, chk_func=chk_func_2)
+        moving_stats(
+            series, chk_size_2, chk_step=chk_step, chk_func=chk_func_2
+        )
     )
 
     return {

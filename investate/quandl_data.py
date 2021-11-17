@@ -6,9 +6,15 @@ import pandas as pd
 
 
 ticks_dicts = {
-    'btc': {'tick': 'BCHARTS/BITSTAMPUSD', 'data_cols': ['Close', 'Volume (BTC)']},
+    'btc': {
+        'tick': 'BCHARTS/BITSTAMPUSD',
+        'data_cols': ['Close', 'Volume (BTC)'],
+    },
     'eth': {'tick': 'BITFINEX/ETHUSD', 'data_cols': ['Last']},
-    'idx500': {'tick': 'MULTPL/SP500_REAL_PRICE_MONTH', 'data_cols': ['Value']},
+    'idx500': {
+        'tick': 'MULTPL/SP500_REAL_PRICE_MONTH',
+        'data_cols': ['Value'],
+    },
     'gold': {'tick': 'WGC/GOLD_DAILY_USD', 'data_cols': ['Value']},
     'gas': {'tick': 'FRED/GASREGCOVW', 'data_cols': ['Value']},
     'cons_idx': {'tick': 'UMICH/SOC1', 'data_cols': ['Index']},
@@ -18,7 +24,10 @@ ticks_dicts = {
         'data_cols': ['Index Value'],
     },
     'cons_idx_infl': {'tick': 'RATEINF/CPI_USA', 'data_cols': ['Value']},
-    'cons_conf_idx': {'tick': 'OECD/KEI_CSCICP02_USA_ST_M', 'data_cols': ['Value']},
+    'cons_conf_idx': {
+        'tick': 'OECD/KEI_CSCICP02_USA_ST_M',
+        'data_cols': ['Value'],
+    },
     'yearly_us_rate': {
         'tick': 'NAHB/INTRATES',
         'data_cols': [
@@ -113,5 +122,7 @@ def normalize_df(df, columns=None, method=divide_by_first):
             df_norm[col] = scaler.fit_transform(df_norm[col])
         # otherwise, like standard scaler, turn everything into an array of array of single value
         except Exception as E:
-            df_norm[col] = scaler.fit_transform(np.array(df_norm[col]).reshape(-1, 1))
+            df_norm[col] = scaler.fit_transform(
+                np.array(df_norm[col]).reshape(-1, 1)
+            )
     return df_norm

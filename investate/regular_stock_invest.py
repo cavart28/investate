@@ -13,8 +13,14 @@ from investate.quandl_data import *
 
 
 def get_total_return_from_monthly_data(
-    price_tick={'tick': 'MULTPL/SP500_REAL_PRICE_MONTH', 'data_cols': ['Value']},
-    dividend_tick={'tick': 'MULTPL/SP500_DIV_YIELD_MONTH', 'data_cols': ['Value']},
+    price_tick={
+        'tick': 'MULTPL/SP500_REAL_PRICE_MONTH',
+        'data_cols': ['Value'],
+    },
+    dividend_tick={
+        'tick': 'MULTPL/SP500_DIV_YIELD_MONTH',
+        'data_cols': ['Value'],
+    },
     start_date='1910-01-01',
     end_date='2021-03-01',
     remove_begining=True,
@@ -31,6 +37,7 @@ def get_total_return_from_monthly_data(
         df = df.drop(begining_of_month_indices)
     df['shift_price'] = df.price_Value.shift(1)
     growth_series = (
-        df['dividends_Value'] / (12 * 100) + df['price_Value'] / df['shift_price']
+        df['dividends_Value'] / (12 * 100)
+        + df['price_Value'] / df['shift_price']
     )
     return growth_series.iloc[1:]

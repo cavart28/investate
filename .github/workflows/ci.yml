@@ -62,8 +62,8 @@ jobs:
           pip -q install axblack twine wads isee
           isee install-requires
 
-      - name: Format source code
-        run: black  --line-length=88 .
+#      - name: Format source code
+#        run: black  --line-length=88 .
 
       - name: Update version number
         run: |

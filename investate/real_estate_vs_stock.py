@@ -27,7 +27,10 @@ from investate.series_utils import *
 
 
 def compute_mortg_principal(
-    loan_rate=0.04, loan_amount=1000, years_to_maturity=30, n_payment_per_year=12
+    loan_rate=0.04,
+    loan_amount=1000,
+    years_to_maturity=30,
+    n_payment_per_year=12,
 ):
     """
     Compute the principal payment of a mortgage
@@ -187,16 +190,20 @@ def house_investment(
         for i in range(n_total_months)
     ]
     # series of monthly balance
-    monthly_income = [i[0] - i[1] for i in zip(rental_income, total_cost_per_month)]
+    monthly_income = [
+        i[0] - i[1] for i in zip(rental_income, total_cost_per_month)
+    ]
 
     # house values over time
     house_value = [
-        house_cost * (1 + estate_rate / 12) ** (i + 1) for i in range(n_total_months)
+        house_cost * (1 + estate_rate / 12) ** (i + 1)
+        for i in range(n_total_months)
     ]
 
     # if nothing were repaid, the loan would follow this
     unrepaid_loan_remaining = [
-        loan_amount * (1 + mortg_rate / 12) ** (i + 1) for i in range(n_months_repay)
+        loan_amount * (1 + mortg_rate / 12) ** (i + 1)
+        for i in range(n_months_repay)
     ]
     # but we do repay, we can imagine we pay in a different account on the side
     repaid_total = values_of_series_of_invest(
@@ -206,7 +213,9 @@ def house_investment(
     )
     # and the loan balance is the difference between the "unrepaid loan" and what we amass in the
     # side account
-    loan_remaining = [i[0] - i[1] for i in zip(unrepaid_loan_remaining, repaid_total)]
+    loan_remaining = [
+        i[0] - i[1] for i in zip(unrepaid_loan_remaining, repaid_total)
+    ]
     # adding the extra months, where the loan is fully repaid
     loan_remaining += [0] * (n_total_months - n_months_repay)
     # the equity is the difference between the house value and the remaining loan
@@ -225,7 +234,9 @@ def house_investment(
         plt.xlabel('months')
         plt.ylabel('total')
         plt.legend()
-        plt.title(f'Equity over {mortgage_n_years + n_years_after_pay_off} years')
+        plt.title(
+            f'Equity over {mortgage_n_years + n_years_after_pay_off} years'
+        )
         plt.show()
         plt.plot(monthly_income, label='monthly income')
         plt.vlines(
@@ -289,7 +300,9 @@ def compare_house_invest_vs_stock(
     ]
     # the same initial investment in stock would yield
     down_payment_invest = [
-        down_payment_perc * house_cost * (1 + stock_market_month_rate) ** (i + 1)
+        down_payment_perc
+        * house_cost
+        * (1 + stock_market_month_rate) ** (i + 1)
         for i in range(len(monthly_income))
     ]
     invested_negative_monthly_income = values_of_series_of_invest(
@@ -299,7 +312,10 @@ def compare_house_invest_vs_stock(
         invest_at_begining_of_period=False,
     )
     total_stock_market_invest = [
-        i + j for (i, j) in zip(down_payment_invest, invested_negative_monthly_income)
+        i + j
+        for (i, j) in zip(
+            down_payment_invest, invested_negative_monthly_income
+        )
     ]
 
     if plot:

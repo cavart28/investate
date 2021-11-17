@@ -12,9 +12,13 @@ from investate.real_estate_vs_stock import (
 st.title('House vs other investment')
 
 house_cost = st.sidebar.number_input('House price', value=240000)
-down_payment_perc = st.sidebar.number_input('Down payment percentage', value=10) * 0.01
+down_payment_perc = (
+    st.sidebar.number_input('Down payment percentage', value=10) * 0.01
+)
 mortg_rate = st.sidebar.number_input('Mortgage rate', value=2.75) * 0.01
-mortgage_n_years = st.sidebar.number_input('Mortgage duration in years', value=15)
+mortgage_n_years = st.sidebar.number_input(
+    'Mortgage duration in years', value=15
+)
 n_years_after_pay_off = st.sidebar.number_input(
     'Years to display after pay off', value=5
 )
@@ -29,11 +33,14 @@ percentage_rented = st.sidebar.number_input('Percentage rented', value=0.5)
 
 
 estate_rate = (
-    st.sidebar.number_input('Yearly real estate market increase', value=3.5) * 0.01
+    st.sidebar.number_input('Yearly real estate market increase', value=3.5)
+    * 0.01
 )
 inflation_rate = st.sidebar.number_input('Inflation rate', value=2.1) * 0.01
 income_tax = st.sidebar.number_input('Income tax percentage', value=33) * 0.01
-management_fees_rate = st.sidebar.number_input('Management fees', value=22) * 0.01
+management_fees_rate = (
+    st.sidebar.number_input('Management fees', value=22) * 0.01
+)
 stock_market_rate = (
     st.sidebar.number_input('Yearly rate of other investment', value=8) * 0.01
 )

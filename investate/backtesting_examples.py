@@ -57,13 +57,18 @@ Tools to backtest simple investing strategies
 
 from investate.moving_average import *
 from investate.quandl_data import *
-from investate.series_utils import investment_over_period, values_to_percent_growth
+from investate.series_utils import (
+    investment_over_period,
+    values_to_percent_growth,
+)
 
 
 # ---------------------------------------------SMA----------------------------------------------------------------------
 
 
-def invest_with_sma(chk_size_1, chk_size_2, thres_invest=0.5, thresh_devest=0.5):
+def invest_with_sma(
+    chk_size_1, chk_size_2, thres_invest=0.5, thresh_devest=0.5
+):
     """
     Create a function/strategy which given a series output another series of 0 and 1's where 1 means invest
     and 0 means devest.
@@ -115,7 +120,9 @@ def parameter_grid_search(series, max_chk_size):
                 stat_dict['stat_series_2'],
                 stat_dict['cut_series'],
             )
-            invest_func = invest_with_sma(chk_size_1=chk_size_1, chk_size_2=chk_size_2)
+            invest_func = invest_with_sma(
+                chk_size_1=chk_size_1, chk_size_2=chk_size_2
+            )
             invest_period = np.array(list(invest_func(series)))
 
             period_rate_A = values_to_percent_growth(cut_series)
@@ -160,6 +167,8 @@ def plot_mat(mat):
     )  # annot=True, annot_kw={'font_scale': 0.1})
     plt.plot()
     plt.show()
+
+
 #
 # if __name__ == "__main__":
 #     import pandas as pd
