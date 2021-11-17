@@ -135,3 +135,8 @@ def plot_mat(mat):
                 square=True, linewidths=.5, cbar_kws={"shrink": .5})  # annot=True, annot_kw={'font_scale': 0.1})
     plt.plot()
     plt.show()
+#
+# if __name__ == "__main__":
+#     import pandas as pd
+#     df = pd.read_csv('test_dfs/eth.csv')
+#     display(df)

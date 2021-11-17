@@ -30,7 +30,7 @@ def test_compute_mortg_principal(loan_rate, loan_amount, years_to_maturity, n_pa
     principal = compute_mortg_principal(loan_rate, loan_amount, years_to_maturity, n_payment_per_year)
     n_periods = n_payment_per_year * years_to_maturity
     reg_payment = values_of_series_of_invest(
-        rate_between_amounts=[loan_rate / n_payment_per_year] * n_periods,
+        rates_between_periods=[loan_rate / n_payment_per_year] * n_periods,
         invest_amounts=[principal] * n_periods,
         final_only=True)
     loan_left_unpaid = loan_amount * (1 + loan_rate / n_payment_per_year) ** (n_payment_per_year * years_to_maturity)

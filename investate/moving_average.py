@@ -65,12 +65,14 @@ def moving_stats(series, chk_size, chk_step=1, chk_func=np.mean):
     >>> list(moving_stats(series, chk_size=2, chk_func=np.mean))
     [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5]
 
-    >>> # the size of the series outputed with the default step of size 1 is always len(series) - chk_size + 1
+    The size of the series outputed with the default step of size 1 is always len(series) - chk_size + 1
+
     >>> chk_size, series_length = 12, 100
     >>> series = range(series_length)
     >>> assert len(list(moving_stats(series, chk_size=chk_size))) == series_length - chk_size + 1, 'something is wrong!'
 
-    >>> # one can compute more complicated moving averages by using various win_func
+    One can compute more complicated moving averages by using various win_func
+
     >>> series = range(10)
     >>> chk_size = 2
     >>> chk_func = lambda x: np.mean(np.array(x) * np.array([0.1] * chk_size))

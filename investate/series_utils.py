@@ -5,7 +5,7 @@ Module containing some of the fundamental functions to compute value of investme
 import numpy as np
 
 
-def values_of_series_of_invest(rate_between_amounts,
+def values_of_series_of_invest(rates_between_periods,
                                invest_amounts=None,
                                final_only=True,
                                invest_at_begining_of_period=False):
@@ -21,53 +21,62 @@ def values_of_series_of_invest(rate_between_amounts,
     :param: invest_at_begining_of_period, boolean, whether to invest at the begining of a period
             or the end.
 
-    # no growth, the result is just the sum of the amoun
-    >>> rate_between_amounts = (0, 0)
+    # no growth, the result is just the sum of the amounts
+    >>> rates_between_periods = (0, 0)
     >>> invest_amounts = (1, 1)
-    >>> values_of_series_of_invest(rate_between_amounts, invest_amounts)
+    >>> values_of_series_of_invest(rates_between_periods, invest_amounts)
     2
-    >>> # final_only controls whether to get the intermediate values
-    >>> values_of_series_of_invest(rate_between_amounts, invest_amounts, final_only=False)
+
+    Final_only controls whether to get the intermediate values
+
+    >>> values_of_series_of_invest(rates_between_periods, invest_amounts, final_only=False)
     [1, 2]
-    >>> # the first rate is not used by default, since the amounts are invested at the END of the period
+
+    The first rate is not used by default, since the amounts are invested at the END of the period
+
     >>> invest_amounts = (1, 1)
-    >>> rate_between_amounts = (0.05, 0)
-    >>> values_of_series_of_invest(rate_between_amounts, invest_amounts, final_only=False)
+    >>> rates_between_periods = (0.05, 0)
+    >>> values_of_series_of_invest(rates_between_periods, invest_amounts, final_only=False)
     [1.0, 2.0]
-    >>> # this can be changed however, by setting invest_at_begining_of_period to True
-    >>> values_of_series_of_invest(rate_between_amounts, invest_amounts, final_only=False, invest_at_begining_of_period=True)
+
+    This can be changed however, by setting invest_at_begining_of_period to True
+
+    >>> values_of_series_of_invest(rates_between_periods, invest_amounts, final_only=False, invest_at_begining_of_period=True)
     [1.05, 2.05]
     >>> invest_amounts = (1, 1)
-    >>> rate_between_amounts = (0.05, 0.08)
-    >>> values_of_series_of_invest(rate_between_amounts, invest_amounts, invest_at_begining_of_period=True, final_only=False)
+    >>> rates_between_periods = (0.05, 0.08)
+    >>> values_of_series_of_invest(rates_between_periods, invest_amounts, invest_at_begining_of_period=True, final_only=False)
     [1.05, 2.1340000000000003]
 
-    # it can easily be used to get total invested value after several regular investments
+    It can easily be used to get total invested value after several regular investments
+
     >>> n_years = 10
     >>> rate = 0.08
     >>> yearly_investment = 100
-    >>> values_of_series_of_invest(rate_between_amounts=[rate] * n_years, invest_amounts=[yearly_investment] * n_years)
+    >>> rates_between_periods = [rate] * n_years
+    >>> invest_amounts = [yearly_investment] * n_years
+    >>> values_of_series_of_invest(rates_between_periods, invest_amounts)
     1448.656246590984
 
-    # another application is to get the historical growth of a stock from one year to the next
-    # to evaluate the total value of a series of investments
+    Another application is to get the historical growth of a stock from one year to the next
+    to evaluate the total value of a series of investments
 
     """
 
     # if no invest amounts is given, it is assumed 1 unit is invested after the first period and nothing else
     if invest_amounts is None:
-        invest_amounts = [1] + [0] * len(rate_between_amounts)
+        invest_amounts = [1] + [0] * len(rates_between_periods)
 
     if invest_at_begining_of_period:
         invest_amounts = list(invest_amounts)
-        rate_between_amounts = list(rate_between_amounts)
-        total = invest_amounts.pop(0) * (1 + rate_between_amounts.pop(0))
+        rates_between_periods = list(rates_between_periods)
+        total = invest_amounts.pop(0) * (1 + rates_between_periods.pop(0))
         value_over_time = [total]
     else:
         total = 0
         value_over_time = []
 
-    for invest, rate in zip(invest_amounts, rate_between_amounts):
+    for invest, rate in zip(invest_amounts, rates_between_periods):
         total = total * (1 + rate) + invest
         value_over_time.append(total)
 
