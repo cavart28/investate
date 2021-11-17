@@ -2,7 +2,7 @@
    :maxdepth: 2
    :caption: Contents:
 
-   module_docs/investate/backtesting
+   module_docs/investate/backtesting_examples
    module_docs/investate/moving_average
    module_docs/investate/quandl_data
    module_docs/investate/real_estate_vs_stock
