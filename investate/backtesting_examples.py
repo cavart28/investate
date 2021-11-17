@@ -62,6 +62,7 @@ from investate.series_utils import investment_over_period, values_to_percent_gro
 
 # ---------------------------------------------SMA----------------------------------------------------------------------
 
+
 def invest_with_sma(chk_size_1, chk_size_2, thres_invest=0.5, thresh_devest=0.5):
     """
     Create a function/strategy which given a series output another series of 0 and 1's where 1 means invest
@@ -71,8 +72,18 @@ def invest_with_sma(chk_size_1, chk_size_2, thres_invest=0.5, thresh_devest=0.5)
 
     def invest_func(series):
 
-        ma_dict = get_comp_ma(series, chk_size_1, chk_size_2, chk_step=1, chk_func_1=np.mean, chk_func_2=np.mean)
-        cut_stat_series_1, cut_stat_series_2 = ma_dict['stat_series_1'], ma_dict['stat_series_2']
+        ma_dict = get_comp_ma(
+            series,
+            chk_size_1,
+            chk_size_2,
+            chk_step=1,
+            chk_func_1=np.mean,
+            chk_func_2=np.mean,
+        )
+        cut_stat_series_1, cut_stat_series_2 = (
+            ma_dict['stat_series_1'],
+            ma_dict['stat_series_2'],
+        )
         diff_ma_series = cut_stat_series_1 - cut_stat_series_2
         # return 1 until we have enough data to compute the largest window needed
         for i in range(chk_size_2 - 1):
@@ -96,22 +107,28 @@ def parameter_grid_search(series, max_chk_size):
 
     for (chk_size_1, chk_size_2) in product(chk_sizes, chk_sizes):
         if chk_size_2 > chk_size_1:
-            stat_dict = get_comp_ma(series, chk_size_1=chk_size_1, chk_size_2=chk_size_2)
-            stat_series_1, stat_series_2, cut_series = stat_dict['stat_series_1'], stat_dict['stat_series_2'], \
-                                                       stat_dict[
-                                                           'cut_series']
+            stat_dict = get_comp_ma(
+                series, chk_size_1=chk_size_1, chk_size_2=chk_size_2
+            )
+            stat_series_1, stat_series_2, cut_series = (
+                stat_dict['stat_series_1'],
+                stat_dict['stat_series_2'],
+                stat_dict['cut_series'],
+            )
             invest_func = invest_with_sma(chk_size_1=chk_size_1, chk_size_2=chk_size_2)
             invest_period = np.array(list(invest_func(series)))
 
             period_rate_A = values_to_percent_growth(cut_series)
             period_rate_B = [0] * len(cut_series)
 
-            val_A, val_B = investment_over_period(period_rates_A=period_rate_A,
-                                                  period_rates_B=period_rate_B,
-                                                  fees_func_AB=None,
-                                                  period_end_balance=invest_period,
-                                                  initial_investment_A=1,
-                                                  initial_investment_B=0)
+            val_A, val_B = investment_over_period(
+                period_rates_A=period_rate_A,
+                period_rates_B=period_rate_B,
+                fees_func_AB=None,
+                period_end_balance=invest_period,
+                initial_investment_A=1,
+                initial_investment_B=0,
+            )
 
             total = np.array(val_A) + np.array(val_B)
             mat[chk_size_1, chk_size_2] = total[-1]
@@ -123,7 +140,7 @@ def plot_mat(mat):
     """
     Dirty little function to plot and compare the return for simple moving average strategies
     """
-    sns.set_theme(style="white")
+    sns.set_theme(style='white')
 
     # Set up the matplotlib figure
     f, ax = plt.subplots(figsize=(6, 6))
@@ -131,8 +148,16 @@ def plot_mat(mat):
     mask = np.tril(np.ones_like(mat, dtype=bool))
 
     # Draw the heatmap with the mask and correct aspect ratio
-    sns.heatmap(mat, mask=mask, vmax=np.max(mat), vmin=np.min(mat), center=0,
-                square=True, linewidths=.5, cbar_kws={"shrink": .5})  # annot=True, annot_kw={'font_scale': 0.1})
+    sns.heatmap(
+        mat,
+        mask=mask,
+        vmax=np.max(mat),
+        vmin=np.min(mat),
+        center=0,
+        square=True,
+        linewidths=0.5,
+        cbar_kws={'shrink': 0.5},
+    )  # annot=True, annot_kw={'font_scale': 0.1})
     plt.plot()
     plt.show()
 #

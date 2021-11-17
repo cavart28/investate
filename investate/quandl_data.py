@@ -5,20 +5,30 @@ import numpy as np
 import pandas as pd
 
 
-ticks_dicts = {'btc': {'tick': 'BCHARTS/BITSTAMPUSD', 'data_cols': ['Close', 'Volume (BTC)']},
-               'eth': {'tick': 'BITFINEX/ETHUSD', 'data_cols': ['Last']},
-               'idx500': {'tick': 'MULTPL/SP500_REAL_PRICE_MONTH', 'data_cols': ['Value']},
-               'gold': {'tick': 'WGC/GOLD_DAILY_USD', 'data_cols': ['Value']},
-               'gas': {'tick': 'FRED/GASREGCOVW', 'data_cols': ['Value']},
-               'cons_idx': {'tick': 'UMICH/SOC1', 'data_cols': ['Index']},
-               'month_sav': {'tick': 'FRED/PSAVERT', 'data_cols': ['Value']},
-               'yale_cons_idx': {'tick': 'YALE/US_CONF_INDEX_VAL_INST', 'data_cols': ['Index Value']},
-               'cons_idx_infl': {'tick': 'RATEINF/CPI_USA', 'data_cols': ['Value']},
-               'cons_conf_idx': {'tick': 'OECD/KEI_CSCICP02_USA_ST_M', 'data_cols': ['Value']},
-               'yearly_us_rate': {'tick': 'NAHB/INTRATES', 'data_cols': ['Federal Funds Rate',
-                                                                         'Freddie Mac Commitment Fixed Rate Mortgages',
-                                                                         'Prime Rate']},
-               'fed_for': {'tick': 'FRED/BASE', 'data_cols': ['Value']}}
+ticks_dicts = {
+    'btc': {'tick': 'BCHARTS/BITSTAMPUSD', 'data_cols': ['Close', 'Volume (BTC)']},
+    'eth': {'tick': 'BITFINEX/ETHUSD', 'data_cols': ['Last']},
+    'idx500': {'tick': 'MULTPL/SP500_REAL_PRICE_MONTH', 'data_cols': ['Value']},
+    'gold': {'tick': 'WGC/GOLD_DAILY_USD', 'data_cols': ['Value']},
+    'gas': {'tick': 'FRED/GASREGCOVW', 'data_cols': ['Value']},
+    'cons_idx': {'tick': 'UMICH/SOC1', 'data_cols': ['Index']},
+    'month_sav': {'tick': 'FRED/PSAVERT', 'data_cols': ['Value']},
+    'yale_cons_idx': {
+        'tick': 'YALE/US_CONF_INDEX_VAL_INST',
+        'data_cols': ['Index Value'],
+    },
+    'cons_idx_infl': {'tick': 'RATEINF/CPI_USA', 'data_cols': ['Value']},
+    'cons_conf_idx': {'tick': 'OECD/KEI_CSCICP02_USA_ST_M', 'data_cols': ['Value']},
+    'yearly_us_rate': {
+        'tick': 'NAHB/INTRATES',
+        'data_cols': [
+            'Federal Funds Rate',
+            'Freddie Mac Commitment Fixed Rate Mortgages',
+            'Prime Rate',
+        ],
+    },
+    'fed_for': {'tick': 'FRED/BASE', 'data_cols': ['Value']},
+}
 
 
 def get_col_names_for_tick(tick='BCHARTS/BITSTAMPUSD'):
@@ -28,11 +38,13 @@ def get_col_names_for_tick(tick='BCHARTS/BITSTAMPUSD'):
     return quandl.get(tick, start_date=None).columns
 
 
-def make_df_from_ticks(api_key,
-                       ticks_dicts=ticks_dicts,
-                       start_date='2017-01-01',
-                       end_date='2030-12-31',
-                       verbose=False):
+def make_df_from_ticks(
+    api_key,
+    ticks_dicts=ticks_dicts,
+    start_date='2017-01-01',
+    end_date='2030-12-31',
+    verbose=False,
+):
     """
     Make a df from the ticks in the ticks_list
     """
@@ -48,7 +60,9 @@ def make_df_from_ticks(api_key,
             try:
                 if verbose:
                     print(f'{data_col}')
-                tick_data = quandl.get(tick_dict['tick'], start_date=start_date, end_date=end_date)
+                tick_data = quandl.get(
+                    tick_dict['tick'], start_date=start_date, end_date=end_date
+                )
                 if first:
                     df[name + '_' + data_col] = tick_data[data_col]
                     first = False

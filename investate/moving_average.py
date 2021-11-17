@@ -33,7 +33,9 @@ def chunker(iterable, chk_size, chk_step=1):
 
     iterable = iter(iterable)
     initial = list(islice(iterable, chk_size))
-    d = deque(initial, maxlen=int(chk_size))  # applying int to avoid an issue with in64 being rejected by deque
+    d = deque(
+        initial, maxlen=int(chk_size)
+    )  # applying int to avoid an issue with in64 being rejected by deque
 
     if len(d) == chk_size:
         yield tuple(d)
@@ -85,7 +87,9 @@ def moving_stats(series, chk_size, chk_step=1, chk_func=np.mean):
     return map(chk_func, chunks)
 
 
-def get_comp_ma(series, chk_size_1, chk_size_2, chk_step=1, chk_func_1=np.mean, chk_func_2=np.mean):
+def get_comp_ma(
+    series, chk_size_1, chk_size_2, chk_step=1, chk_func_1=np.mean, chk_func_2=np.mean
+):
     """
     Convenience function to compute and align the moving average of a series
     """
@@ -94,21 +98,25 @@ def get_comp_ma(series, chk_size_1, chk_size_2, chk_step=1, chk_func_1=np.mean, 
     chk_size_1, chk_size_2 = np.sort([chk_size_1, chk_size_2])
     offset = chk_size_2 - chk_size_1
     series = list(series)
-    stat_series_1 = list(moving_stats(series[offset:], chk_size_1, chk_step=chk_step, chk_func=chk_func_1))
-    stat_series_2 = list(moving_stats(series, chk_size_2, chk_step=chk_step, chk_func=chk_func_2))
+    stat_series_1 = list(
+        moving_stats(
+            series[offset:], chk_size_1, chk_step=chk_step, chk_func=chk_func_1
+        )
+    )
+    stat_series_2 = list(
+        moving_stats(series, chk_size_2, chk_step=chk_step, chk_func=chk_func_2)
+    )
 
-    return {'stat_series_1': np.array(stat_series_1),
-            'stat_series_2': np.array(stat_series_2),
-            'cut_series': np.array(series[chk_size_2 - 1:]),
-            'chk_size_1': chk_size_1,
-            'chk_size_2': chk_size_2}
+    return {
+        'stat_series_1': np.array(stat_series_1),
+        'stat_series_2': np.array(stat_series_2),
+        'cut_series': np.array(series[chk_size_2 - 1 :]),
+        'chk_size_1': chk_size_1,
+        'chk_size_2': chk_size_2,
+    }
 
 
-def plot_mas(stat_series_1,
-             stat_series_2,
-             cut_series,
-             chk_size_1,
-             chk_size_2):
+def plot_mas(stat_series_1, stat_series_2, cut_series, chk_size_1, chk_size_2):
     """
     Plot two moving averages on a single plot
     """
@@ -145,7 +153,7 @@ def plot_ma_grid(series, n_days):
     """
 
     mat = moving_average_grid(series, ma_range=range(n_days))
-    sns.set_theme(style="white")
+    sns.set_theme(style='white')
 
     # Set up the matplotlib figure
     f, ax = plt.subplots(figsize=(6, 6))
@@ -153,6 +161,14 @@ def plot_ma_grid(series, n_days):
     mask = np.tril(np.ones_like(mat, dtype=bool))
 
     # Draw the heatmap with the mask and correct aspect ratio
-    sns.heatmap(mat, mask=mask, vmax=np.max(mat), vmin=np.min(mat), center=0,
-                square=True, linewidths=.5, cbar_kws={"shrink": .5})
+    sns.heatmap(
+        mat,
+        mask=mask,
+        vmax=np.max(mat),
+        vmin=np.min(mat),
+        center=0,
+        square=True,
+        linewidths=0.5,
+        cbar_kws={'shrink': 0.5},
+    )
     plt.plot()
