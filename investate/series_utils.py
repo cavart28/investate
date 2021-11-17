@@ -5,10 +5,12 @@ Module containing some of the fundamental functions to compute value of investme
 import numpy as np
 
 
-def values_of_series_of_invest(rates_between_periods,
-                               invest_amounts=None,
-                               final_only=True,
-                               invest_at_begining_of_period=False):
+def values_of_series_of_invest(
+    rates_between_periods,
+    invest_amounts=None,
+    final_only=True,
+    invest_at_begining_of_period=False,
+):
     """
     Total values after investing each of the values in invest_values, the running total increasing
     by the percentage in rate_between_values from one investment to the next.
@@ -109,7 +111,9 @@ def total_of_regular_investment(reg_invest_value, rate, n_periods):
         return reg_invest_value * n_periods
     else:
         factor = 1 + rate
-        return reg_invest_value + reg_invest_value * (factor - factor ** n_periods) / (1 - factor)
+        return reg_invest_value + reg_invest_value * (factor - factor ** n_periods) / (
+            1 - factor
+        )
 
 
 def values_to_percent_growth(values):
@@ -192,15 +196,19 @@ def rebalance_A_to_B(A, B, target_relative_weight, transfer_fee):
     0.25
 
     """
-    return (A - target_relative_weight * (A + B)) / (1 - target_relative_weight * transfer_fee)
+    return (A - target_relative_weight * (A + B)) / (
+        1 - target_relative_weight * transfer_fee
+    )
 
 
-def investment_over_period(period_rates_A,
-                           period_rates_B,
-                           period_end_balance,
-                           fees_func_AB=None,
-                           initial_investment_A=1,
-                           initial_investment_B=0):
+def investment_over_period(
+    period_rates_A,
+    period_rates_B,
+    period_end_balance,
+    fees_func_AB=None,
+    initial_investment_A=1,
+    initial_investment_B=0,
+):
     """
     It is assumed that the initial investment is 1 unit in value and that it can be transferred between two investments A and B
     following the fees_func_AB. This function is really two in one: one for positive values (corresponding to transfers
@@ -256,12 +264,16 @@ def investment_over_period(period_rates_A,
     val_A = [total_A]
     val_B = [total_B]
 
-    for rate_A, rate_B, end_balance in zip(period_rates_A, period_rates_B, period_end_balance):
+    for rate_A, rate_B, end_balance in zip(
+        period_rates_A, period_rates_B, period_end_balance
+    ):
         # each investment grew during the period
         total_A = total_A * (1 + rate_A)
         total_B = total_B * (1 + rate_B)
         # we want to re-balance from A to B (or from B to A)
-        A_to_B = rebalance_A_to_B(total_A, total_B, end_balance, transfer_fee=fees_func_AB(total_A, total_B))
+        A_to_B = rebalance_A_to_B(
+            total_A, total_B, end_balance, transfer_fee=fees_func_AB(total_A, total_B)
+        )
         total_A -= A_to_B
         total_B += A_to_B * (1 - fees_func_AB(total_A, total_B))
 
