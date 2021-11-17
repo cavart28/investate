@@ -31,10 +31,14 @@ import pandas as pd
 eth_series = pd.read_csv('test_dfs/eth.csv')
 print(eth_series)
 ```
-![alt text](investate/.README_images/img.png)
 
-![alt text33](investate/.README_images/img2.png)
-![alt text333](.README_images/img2.png)
+
+![alt text](.README_images/img.png)
+
+
+![alt text](https://raw.githubusercontent.com/cavart28/investate/main/.README_images/img.png)
+
+
 ```python
 # Then we set our moving average parameters, namely the size of windows (which we call chunks here) used for the rolling means
 chk_size_1 = 10
