@@ -168,9 +168,3 @@ def plot_mat(mat):
     plt.plot()
     plt.show()
 
-
-#
-# if __name__ == "__main__":
-#     import pandas as pd
-#     df = pd.read_csv('test_dfs/eth.csv')
-#     display(df)

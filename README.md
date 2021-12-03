@@ -1,11 +1,13 @@
 # Investate
 
 A collection of tools to find the value over time of various investments.
+Initially motivated by investing in the real estate market, thus its name, the package has since grown to 
+include tools with broader scope.
 
-"How much would I have if I invest every month $10 on a bank account at a rate of 5%"
+"How much would I have if I invest every month $10 on a bank account at a yearly rate of 5%"
 Basic calculus offers a simple formula to answer the question above.
-If more realistically, you invest a different amount every months, and the rate is changing over time,
-there is no algebraic shortcut to get an answer. You can then use the function values_of_series_of_invest to get
+If more realistically, you invest a different amount every month, and the rate is changing over time,
+there is no algebraic shortcut to get an answer. Instead you can use the function values_of_series_of_invest to get
 an answer:
 
 ```python
@@ -17,7 +19,7 @@ values_of_series_of_invest(rate_between_period=[0.01, 0.005, 0.011],
 27.292549999999995
 ```
 
-Investate contains simple tools to backtest strategies. Below is an example basde on the standard 
+Investate contains simple yet flexible tools to backtest strategies. Below is an example based on the standard 
 crossing averages.
 
 ```python
@@ -60,7 +62,7 @@ period_rate_A = values_to_percent_growth(cut_series)
 # get the growth over time of the alternative investment, here we choose holding cash at 0% APR
 period_rate_B = [0] * len(cut_series)
 
-# get the function which determines the rebalance of the investments
+# get the function which determines the re-balance of the investments
 from investate.backtesting_examples import invest_with_sma
 
 invest_func = invest_with_sma(chk_size_1=chk_size_1, chk_size_2=chk_size_2)
@@ -86,7 +88,7 @@ plt.show()
 ```python
 
 # compute the values of both investments ethereum/saving over time and plot them
-# fees_func is set to None, meaning that we assume there is no fee to transwer from A to B and B to A
+# fees_func is set to None, meaning that we assume there is no fee to transfer from A to B and B to A
 
 from investate.series_utils import investment_over_period
 

@@ -80,7 +80,6 @@ def moving_stats(series, chk_size, chk_step=1, chk_func=np.mean):
     >>> chk_func = lambda x: np.mean(np.array(x) * np.array([0.1] * chk_size))
     >>> list(moving_stats(series, chk_size=chk_size, chk_func=chk_func))
     [0.05, 0.15000000000000002, 0.25, 0.35000000000000003, 0.45, 0.55, 0.6500000000000001, 0.75, 0.8500000000000001]
-
     """
 
     chunks = chunker(series, chk_size, chk_step)
@@ -141,7 +140,7 @@ def plot_mas(stat_series_1, stat_series_2, cut_series, chk_size_1, chk_size_2):
 def moving_average_grid(series, ma_range=range(10)):
     """
     Compute simple moving averages differences for all the pairs of values in ma_range, and make a matrix containing the
-    results
+    results. This may be useful to spot optimal parameters
     """
 
     mat = np.zeros((len(ma_range), len(ma_range)))

@@ -59,7 +59,7 @@ def compute_mortg_principal(
             [loan_rate / n_payment_per_year] * n_periods, [1] * n_periods
         )
 
-        # when the loan is paid off, P * invest_value_factor = total_loan so this is the monthly payment:
+        # when the loan is paid off, Principal * invest_value_factor = total_loan so this is the monthly payment:
         return total_loan / invest_value_factor
 
 
@@ -125,9 +125,6 @@ def inflation_adjust(month_costs_gen, yearly_infl_rate=0.02):
 
 
 # TODO: each variable is beneficial or not, take that into account to allow ranges
-
-# TODO: each variable is beneficial or not, take that into account to allow ranges
-
 
 def house_investment(
     mortg_rate=0.0275,
@@ -278,6 +275,7 @@ def compare_house_invest_vs_stock(
     """
     A util function to quickly get a comparison of investments, one in stock and the other in real estate
     """
+
     stock_market_month_rate = stock_market_rate / 12
 
     # total house investment. Note that negative income are counted negatively, which
@@ -320,8 +318,8 @@ def compare_house_invest_vs_stock(
 
     if plot:
         plt.plot(house_invest, label='house')
-    plt.plot(down_payment_invest, label='stock')
-    plt.legend()
-    plt.show()
+        plt.plot(down_payment_invest, label='stock')
+        plt.legend()
+        plt.show()
 
     return house_invest, total_stock_market_invest
