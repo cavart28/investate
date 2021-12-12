@@ -7,8 +7,10 @@ from dateutil.relativedelta import *
 from tiingo import TiingoClient
 import pandas_datareader as pdr
 from py2store import myconfigs
+from investate.file_utils import *
 
-# each page has about 20 rows, each is one insider purchase
+
+# each page has 20 rows, each is one insider purchase
 def get_insider_df(n_pages=500,
                    n_per_page=20,
                    base_url='https://www.insidermonkey.com/insider-trading/purchases/',
@@ -32,7 +34,7 @@ def get_insider_df(n_pages=500,
     # Get the list of urls required to fetch the data
     urls = [base_url] + [base_url + f'{i}/' for i in range(0, n_per_page * n_pages, n_per_page)]
     all_dfs = []
-    # instantiate a progress bar
+    # since it can take a while, display a progress bar
     bar = progressbar.ProgressBar(maxval=n_pages,
                                   widgets=[progressbar.Bar('=', '[', ']'), ' ',
                                            progressbar.Percentage()])
@@ -66,7 +68,7 @@ def get_insider_df(n_pages=500,
 
 def get_ticker_data_around_date(ticker: str,
                                 start_date: str,
-                                api_key: str,
+                                tiingo_api_key: str,
                                 end_date=None,
                                 length_in_days=180):
     """
@@ -85,7 +87,7 @@ def get_ticker_data_around_date(ticker: str,
     config = {}
     # To reuse the same HTTP Session across API calls (and have better performance), include a session key
     config['session'] = True
-    config['api_key'] = api_key
+    config['api_key'] = tiingo_api_key
     # Initialize
     client = TiingoClient(config)
     if end_date is None:
@@ -164,8 +166,57 @@ def get_insider_purchase_performance(insider_monkey_df,
     return insider_purchase_return
 
 
-if __name__ == "__main__":
+def pull_data_for_tickers(tickers,
+                          tiingo_api_key,
+                          start_date=None,
+                          end_date=None,
+                          save_to='',
+                          check_existing=True):
+    """
+    Persist all the available data for each of the ticker in ticker_list
+    """
 
+    n_tickers = len(tickers)
+    bar = progressbar.ProgressBar(maxval=n_tickers,
+                                  widgets=[progressbar.Bar('=', '[', ']'), ' ',
+                                           progressbar.Percentage()])
+
+
+    config = {}
+    # To reuse the same HTTP Session across API calls (and have better performance), include a session key
+    config['session'] = True
+    config['api_key'] = tiingo_api_key
+    # Initialize
+    client = TiingoClient(config)
+    result = dict()
+    bar.start()
+
+    if check_existing and save_to:
+        result = pickle_load(save_to)
+
+    for idx, ticker in enumerate(tickers):
+        if check_existing and ticker not in result.keys():
+            try:
+                ticker_df = pdr.get_data_tiingo(ticker, start=start_date, end=end_date,
+                                                pause=0.2, api_key=config['api_key'])
+                result[ticker] = ticker_df
+            except Exception as E:
+                print(f"Unable to fetch data, exception: {E}")
+                result[ticker] = None
+        else:
+            # TODO pull only latest needed data by checking last date
+            pass
+        bar.update(idx)
+
+    bar.finish()
+    if save_to:
+        pickle_dump(result, save_to)
+
+    return result
+
+
+
+if __name__ == "__main__":
     api_key = myconfigs['fi.ini']['tiingo']['api']
     save_to_insider = '/Users/Christian.Avart/Dropbox/py4fi_data/insider_buying.csv'
     save_to_insider = ''
