@@ -1,3 +1,5 @@
+"""Script to pull insider data from insidermonkey.com"""
+
 import requests
 import pandas as pd
 import progressbar
