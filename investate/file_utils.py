@@ -15,5 +15,5 @@ def pickle_load(path):
     """
     Load a pickle
     """
-    with open(path, "rb") as pickle_in:
+    with open(path, 'rb') as pickle_in:
         return pickle.load(pickle_in)

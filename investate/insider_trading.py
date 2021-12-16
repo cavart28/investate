@@ -13,11 +13,13 @@ import progressbar
 
 
 # each page has 20 rows, each is one insider purchase
-def get_insider_df(n_pages=500,
-                   n_per_page=20,
-                   base_url='https://www.insidermonkey.com/insider-trading/purchases/',
-                   save_to='',
-                   wait_between_call_sec=None):
+def get_insider_df(
+    n_pages=500,
+    n_per_page=20,
+    base_url='https://www.insidermonkey.com/insider-trading/purchases/',
+    save_to='',
+    wait_between_call_sec=None,
+):
     """
     Function to get insider trading info from insidermonkey.com
 
@@ -34,12 +36,15 @@ def get_insider_df(n_pages=500,
     """
 
     # Get the list of urls required to fetch the data
-    urls = [base_url] + [base_url + f'{i}/' for i in range(0, n_per_page * n_pages, n_per_page)]
+    urls = [base_url] + [
+        base_url + f'{i}/' for i in range(0, n_per_page * n_pages, n_per_page)
+    ]
     all_dfs = []
     # since it can take a while, display a progress bar
-    bar = progressbar.ProgressBar(maxval=n_pages,
-                                  widgets=[progressbar.Bar('=', '[', ']'), ' ',
-                                           progressbar.Percentage()])
+    bar = progressbar.ProgressBar(
+        maxval=n_pages,
+        widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()],
+    )
     bar.start()
     for idx, url in enumerate(urls):
         try:
@@ -68,11 +73,9 @@ def get_insider_df(n_pages=500,
     return df
 
 
-def get_ticker_data_around_date(ticker: str,
-                                start_date: str,
-                                tiingo_api_key: str,
-                                end_date=None,
-                                length_in_days=180):
+def get_ticker_data_around_date(
+    ticker: str, start_date: str, tiingo_api_key: str, end_date=None, length_in_days=180
+):
     """
     Use Tiingo to access stock basic info from the startdate until the endate (or startdate + length_in_days if enddate
     is None)
@@ -95,8 +98,9 @@ def get_ticker_data_around_date(ticker: str,
     if end_date is None:
         rel_delt = relativedelta(days=+length_in_days)
         end_date = start_date + rel_delt
-    tick_df = pdr.get_data_tiingo(ticker, start=start_date, end=end_date,
-                                  pause=0.2, api_key=config['api_key'])
+    tick_df = pdr.get_data_tiingo(
+        ticker, start=start_date, end=end_date, pause=0.2, api_key=config['api_key']
+    )
     return tick_df
 
 
@@ -111,15 +115,18 @@ def get_info_for_row(row, api_key, end_date=None, length_in_days=180):
 
     ticker = row['Symbol']
     start_date = row['Date']
-    return get_ticker_data_around_date(ticker, start_date=start_date, api_key=api_key,
-                                       end_date=end_date, length_in_days=length_in_days)
+    return get_ticker_data_around_date(
+        ticker,
+        start_date=start_date,
+        api_key=api_key,
+        end_date=end_date,
+        length_in_days=length_in_days,
+    )
 
 
-def get_insider_purchase_performance(insider_monkey_df,
-                                     api_key,
-                                     min_total_trigger=1e6,
-                                     length_in_days=180,
-                                     save_to=''):
+def get_insider_purchase_performance(
+    insider_monkey_df, api_key, min_total_trigger=1e6, length_in_days=180, save_to=''
+):
     """
     Go through each row of insider_monkey_df, attempt to fetch the stock stats and find the highest growth
     starting from the date of the insider investment up to length_in_days many more days
@@ -128,9 +135,10 @@ def get_insider_purchase_performance(insider_monkey_df,
     # group by company and date
     g = insider_monkey_df.groupby(['Company', 'Date'])
     ngroups = g.ngroups
-    bar = progressbar.ProgressBar(maxval=ngroups,
-                                  widgets=[progressbar.Bar('=', '[', ']'), ' ',
-                                           progressbar.Percentage()])
+    bar = progressbar.ProgressBar(
+        maxval=ngroups,
+        widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()],
+    )
     bar.start()
     for idx, (group, group_df) in enumerate(g):
         # find the total invested for the date
@@ -142,10 +150,14 @@ def get_insider_purchase_performance(insider_monkey_df,
                 # we will use the first investment of the day to find the value of the stock and the date
                 row = group_df.iloc[0]
                 # get the stock values during the period of interest
-                days_after_invest_df = get_info_for_row(row, api_key=api_key, length_in_days=length_in_days)
+                days_after_invest_df = get_info_for_row(
+                    row, api_key=api_key, length_in_days=length_in_days
+                )
                 # find the mac value during that time
                 max_val = days_after_invest_df['close'].max()
-                row_of_max = days_after_invest_df[days_after_invest_df['close'] == max_val]
+                row_of_max = days_after_invest_df[
+                    days_after_invest_df['close'] == max_val
+                ]
                 # determine the max growth
                 max_growth = max_val / days_after_invest_df.iloc[0]['close'] - 1
                 # the index of row_of_max is a multi-index, we extract the date from there
@@ -153,10 +165,14 @@ def get_insider_purchase_performance(insider_monkey_df,
                 day_invested = row['Date'].replace(tzinfo=None)
                 # this is how many days it took to reach the max, from the day of initial investment
                 days_to_reach_max = day_of_max - day_invested
-                results.append({'ticker': row['Symbol'],
-                                'day_invested': day_invested,
-                                'max_growth': max_growth,
-                                'n days to max': days_to_reach_max, })
+                results.append(
+                    {
+                        'ticker': row['Symbol'],
+                        'day_invested': day_invested,
+                        'max_growth': max_growth,
+                        'n days to max': days_to_reach_max,
+                    }
+                )
                 bar.update(idx)
             except Exception as e:
                 print(e)
@@ -168,21 +184,23 @@ def get_insider_purchase_performance(insider_monkey_df,
     return insider_purchase_return
 
 
-def pull_data_for_tickers(tickers,
-                          tiingo_api_key,
-                          start_date=None,
-                          end_date=None,
-                          save_to='',
-                          check_existing=True):
+def pull_data_for_tickers(
+    tickers,
+    tiingo_api_key,
+    start_date=None,
+    end_date=None,
+    save_to='',
+    check_existing=True,
+):
     """
     Persist all the available data for each of the ticker in ticker_list
     """
 
     n_tickers = len(tickers)
-    bar = progressbar.ProgressBar(maxval=n_tickers,
-                                  widgets=[progressbar.Bar('=', '[', ']'), ' ',
-                                           progressbar.Percentage()])
-
+    bar = progressbar.ProgressBar(
+        maxval=n_tickers,
+        widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()],
+    )
 
     config = {}
     # To reuse the same HTTP Session across API calls (and have better performance), include a session key
@@ -199,11 +217,16 @@ def pull_data_for_tickers(tickers,
     for idx, ticker in enumerate(tickers):
         if check_existing and ticker not in result.keys():
             try:
-                ticker_df = pdr.get_data_tiingo(ticker, start=start_date, end=end_date,
-                                                pause=0.2, api_key=config['api_key'])
+                ticker_df = pdr.get_data_tiingo(
+                    ticker,
+                    start=start_date,
+                    end=end_date,
+                    pause=0.2,
+                    api_key=config['api_key'],
+                )
                 result[ticker] = ticker_df
             except Exception as E:
-                print(f"Unable to fetch data, exception: {E}")
+                print(f'Unable to fetch data, exception: {E}')
                 result[ticker] = None
         else:
             # TODO pull only latest needed data by checking last date
@@ -217,8 +240,7 @@ def pull_data_for_tickers(tickers,
     return result
 
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     api_key = myconfigs['fi.ini']['tiingo']['api']
     save_to_insider = '/Users/Christian.Avart/Dropbox/py4fi_data/insider_buying.csv'
     save_to_insider = ''
@@ -227,12 +249,16 @@ if __name__ == "__main__":
     # insider_monkey_df['Date'] = insider_monkey_df['Date'].apply(parse)
     insider_monkey_df.head()
 
-    save_to_return = '/Users/Christian.Avart/Dropbox/py4fi_data/insider_buying_return.csv'
+    save_to_return = (
+        '/Users/Christian.Avart/Dropbox/py4fi_data/insider_buying_return.csv'
+    )
     save_to_return = ''
-    insider_purchase_return = get_insider_purchase_performance(insider_monkey_df,
-                                                               api_key=api_key,
-                                                               min_total_trigger=1e6,
-                                                               length_in_days=180,
-                                                               save_to=save_to_return)
+    insider_purchase_return = get_insider_purchase_performance(
+        insider_monkey_df,
+        api_key=api_key,
+        min_total_trigger=1e6,
+        length_in_days=180,
+        save_to=save_to_return,
+    )
     # insider_purchase_return = pd.read_csv(save_to_return)
     print(insider_purchase_return)
