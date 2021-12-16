@@ -22,8 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip -q install axblack pytest pylint isee 
-#          pip -q install quandl streamlit seaborn progressbar2 py2store pandas tiingo pandas-datareader
+          pip -q install axblack pytest pylint isee
           isee install-requires
 
 #      - name: Format source code
