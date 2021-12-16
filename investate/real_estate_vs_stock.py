@@ -204,8 +204,8 @@ def house_investment(
     ]
     # but we do repay, we can imagine we pay in a different account on the side
     repaid_total = values_of_series_of_invest(
-        [monthly_mort_payment] * n_months_repay,
         [mortg_rate / 12] * n_months_repay,
+        [monthly_mort_payment] * n_months_repay,
         final_only=False,
     )
     # and the loan balance is the difference between the "unrepaid loan" and what we amass in the
@@ -289,8 +289,8 @@ def compare_house_invest_vs_stock(
         for i in zip(
             equity,
             values_of_series_of_invest(
-                positive_monthly_income,
                 [stock_market_month_rate] * len(monthly_income),
+                positive_monthly_income,
                 final_only=False,
                 invest_at_begining_of_period=False,
             ),
@@ -304,8 +304,8 @@ def compare_house_invest_vs_stock(
         for i in range(len(monthly_income))
     ]
     invested_negative_monthly_income = values_of_series_of_invest(
-        negative_monthly_income,
         [stock_market_month_rate] * len(negative_monthly_income),
+        negative_monthly_income,
         final_only=False,
         invest_at_begining_of_period=False,
     )

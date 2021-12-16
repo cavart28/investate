@@ -140,7 +140,7 @@ def parameter_grid_search(series, max_chk_size):
             total = np.array(val_A) + np.array(val_B)
             mat[chk_size_1, chk_size_2] = total[-1]
             all_return.append(cut_series[-1] / cut_series[0])
-    return np.mean(all_return), mat
+    return np.mean(all_return), mat[1:, 1:]
 
 
 def plot_mat(mat):

@@ -81,8 +81,7 @@ period_rate_B = [0] * len(cut_series)
 
 Our strategy is the classical "sma cross over", namely, we devest from ethereum anytime the fast moving 
 average falls bellow the slow moving average. Conversely, we re-invest anytime the trend reverses.
-The logic of the strategy is coded in the function invest_with_sma. A 1 means "at the corresponding time,
-invest all availalbe in A", while a 0 means "invest all available in B".
+The logic of the strategy is coded in the function invest_with_sma.
 
 ```python
 from investate.backtesting_examples import invest_with_sma
@@ -90,7 +89,8 @@ invest_func = invest_with_sma(chk_size_1=chk_size_1, chk_size_2=chk_size_2)
 ```
 
 Invest_with_sma applied to eth_series provides a series of 0/1 determining whether to invest in ethereum
-for each period.
+for each period.  A 1 means "at the corresponding time,
+invest all availalbe in A", while a 0 means "invest all available in B".
 
 ```python
 invest_period = np.array(list(invest_func(eth_series)))
@@ -151,3 +151,12 @@ plot_mat(mat)
 ```
 ![alt text](.README_images/img5.png)
 
+### Real estate investment
+A streamlit app is provided to evaluate a real estate investment and it compare it to 
+the same initial amount invested in a something like say the index 500. The app can be accessed by running
+streamlit_house_app.py or alternatively use the url below:
+https://investest.herokuapp.com
+
+Note that the heroku version above may not be the latest. Below is a screenshot of the 
+app. The parameters meaning should be clear from context.
+![alt text](.README_images/img6.png)

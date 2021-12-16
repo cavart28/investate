@@ -92,7 +92,7 @@ def total_of_regular_investment(reg_invest_value, rate, n_periods):
     """
     A special case of total_of_series_of_invest, when the investements are constant and the rate
     remains constant. Uses math formula instead of recursion. Not super useful except may be to
-    keep track of the formula for other usage.
+    keep track of the formula for other usage, may be where performance would matter (unlikely)
 
     >>> total_of_regular_investment(10, 0, 5)
     50
