@@ -2,7 +2,6 @@
 
 import requests
 import pandas as pd
-import progressbar
 from time import sleep
 from dateutil.parser import *
 from dateutil.relativedelta import *
@@ -10,6 +9,7 @@ from tiingo import TiingoClient
 import pandas_datareader as pdr
 from py2store import myconfigs
 from investate.file_utils import *
+import progressbar
 
 
 # each page has 20 rows, each is one insider purchase
