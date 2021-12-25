@@ -1,4 +1,5 @@
 """Script to pull insider data from insidermonkey.com"""
+import datetime
 
 import requests
 import pandas as pd
@@ -95,9 +96,11 @@ def get_ticker_data_around_date(
     config['api_key'] = tiingo_api_key
     # Initialize
     client = TiingoClient(config)
-    if end_date is None:
+    if end_date is None and length_in_days is not None:
         rel_delt = relativedelta(days=+length_in_days)
         end_date = start_date + rel_delt
+    elif end_date is None and length_in_days is None:
+        end_date = datetime.datetime.today()
     tick_df = pdr.get_data_tiingo(
         ticker, start=start_date, end=end_date, pause=0.2, api_key=config['api_key']
     )
@@ -185,12 +188,12 @@ def get_insider_purchase_performance(
 
 
 def pull_data_for_tickers(
-    tickers,
-    tiingo_api_key,
-    start_date=None,
-    end_date=None,
-    save_to='',
-    check_existing=True,
+        tickers,
+        tiingo_api_key,
+        start_date=None,
+        end_date=None,
+        save_to='',
+        check_existing=True,
 ):
     """
     Persist all the available data for each of the ticker in ticker_list
@@ -215,7 +218,8 @@ def pull_data_for_tickers(
         result = pickle_load(save_to)
 
     for idx, ticker in enumerate(tickers):
-        if check_existing and ticker not in result.keys():
+        # if ticker has not data existing locally already or check_existing is set to False, fetch the data with tiingo
+        if ticker not in result.keys() or not check_existing:
             try:
                 ticker_df = pdr.get_data_tiingo(
                     ticker,
@@ -228,9 +232,19 @@ def pull_data_for_tickers(
             except Exception as E:
                 print(f'Unable to fetch data, exception: {E}')
                 result[ticker] = None
+        # otherwise, some data exist locally, only fetch the new dates and concatenate to the existing
         else:
-            # TODO pull only latest needed data by checking last date
-            pass
+            existing_data = result[ticker]
+            last_data_day = existing_data.index[-1][1].replace(tzinfo=None)
+            ticker_df = pdr.get_data_tiingo(
+                ticker,
+                start=last_data_day,
+                end=None,
+                pause=0.2,
+                api_key=config['api_key'],
+            )
+            new_ticker_data = pd.concat([existing_data, ticker_df])
+            result[ticker] = new_ticker_data
         bar.update(idx)
 
     bar.finish()
@@ -238,7 +252,6 @@ def pull_data_for_tickers(
         pickle_dump(result, save_to)
 
     return result
-
 
 if __name__ == '__main__':
     api_key = myconfigs['fi.ini']['tiingo']['api']
