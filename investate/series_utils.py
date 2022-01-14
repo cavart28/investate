@@ -272,7 +272,10 @@ def investment_over_period(
         total_B = total_B * (1 + rate_B)
         # we want to re-balance from A to B (or from B to A)
         A_to_B = rebalance_A_to_B(
-            total_A, total_B, end_balance, transfer_fee=fees_func_AB(total_A, total_B),
+            total_A,
+            total_B,
+            end_balance,
+            transfer_fee=fees_func_AB(total_A, total_B),
         )
         total_A -= A_to_B
         total_B += A_to_B * (1 - fees_func_AB(total_A, total_B))
