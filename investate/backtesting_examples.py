@@ -84,8 +84,8 @@ def invest_with_sma(chk_size_1, chk_size_2, thres_invest=0.5, thresh_devest=0.5)
             chk_func_2=np.mean,
         )
         cut_stat_series_1, cut_stat_series_2 = (
-            ma_dict['stat_series_1'],
-            ma_dict['stat_series_2'],
+            ma_dict["stat_series_1"],
+            ma_dict["stat_series_2"],
         )
         diff_ma_series = cut_stat_series_1 - cut_stat_series_2
         # return 1 until we have enough data to compute the largest window needed
@@ -114,9 +114,9 @@ def parameter_grid_search(series, max_chk_size):
                 series, chk_size_1=chk_size_1, chk_size_2=chk_size_2
             )
             stat_series_1, stat_series_2, cut_series = (
-                stat_dict['stat_series_1'],
-                stat_dict['stat_series_2'],
-                stat_dict['cut_series'],
+                stat_dict["stat_series_1"],
+                stat_dict["stat_series_2"],
+                stat_dict["cut_series"],
             )
             invest_func = invest_with_sma(chk_size_1=chk_size_1, chk_size_2=chk_size_2)
             invest_period = np.array(list(invest_func(series)))
@@ -143,7 +143,7 @@ def plot_mat(mat):
     """
     Dirty little function to plot and compare the return for simple moving average strategies
     """
-    sns.set_theme(style='white')
+    sns.set_theme(style="white")
 
     # Set up the matplotlib figure
     f, ax = plt.subplots(figsize=(6, 6))
@@ -159,7 +159,7 @@ def plot_mat(mat):
         center=0,
         square=True,
         linewidths=0.5,
-        cbar_kws={'shrink': 0.5},
+        cbar_kws={"shrink": 0.5},
     )  # annot=True, annot_kw={'font_scale': 0.1})
     plt.plot()
     plt.show()
