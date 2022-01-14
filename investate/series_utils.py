@@ -3,7 +3,7 @@ Module containing some of the fundamental functions to compute value of investme
 """
 
 import numpy as np
-
+from operator import itemgetter
 
 def values_of_series_of_invest(
     rates_between_periods,
@@ -281,3 +281,23 @@ def investment_over_period(
         val_B.append(total_B)
 
     return val_A, val_B
+
+
+def parallel_sort(iterable_list, sort_idx=0):
+    """
+    Sort several lists in iterable_list in parallel, according to the the list of index sort_idx
+    :param iterable_list: list of list, all the lists have the same length
+    :param sort_idx: int, the index of the list to sort by
+    :return: a list sorted tuples
+
+
+    >>> parallel_sort([[2, 3, 1], ['a', 'b', 'c']])
+    [(1, 2, 3), ('c', 'a', 'b')]
+
+    >>> parallel_sort([[2, 3, 1], ['a', 'b', 'c'], [10, 9, 7]], sort_idx=2)
+    [(1, 3, 2), ('c', 'b', 'a'), (7, 9, 10)]
+
+    """
+    z = zip(*iterable_list)
+    sorted_z = [item for item in sorted(z, key=itemgetter(sort_idx))]
+    return list(zip(*sorted_z))

@@ -16,6 +16,7 @@ import progressbar
 # each page has 20 rows, each is one insider purchase
 def get_insider_df(
     n_pages=500,
+    oldest_data='2020-01-01',
     n_per_page=20,
     base_url='https://www.insidermonkey.com/insider-trading/purchases/',
     save_to='',
@@ -24,7 +25,9 @@ def get_insider_df(
     """
     Function to get insider trading info from insidermonkey.com
 
-    :param n_pages: number of webpage to get, starting from most recent
+    :param n_pages: number of webpage to get, starting from most recent. If oldest_data is reached, the loop is aborted
+    :param oldest_data: str, date before which the data stopped being fetched, even if less than n_pages have been
+    fetched
     :param n_per_page: number of insider trades per page on insidermonkey, 20 at the momment
     :param base_url: the url of the first page (most recent) insider trades
     :param save_to: location where to save the csv
@@ -52,10 +55,14 @@ def get_insider_df(
             html = requests.get(url).content
             df_list = pd.read_html(html)
             df = df_list[0]
+            df.sort_values('Date')
             all_dfs.append(df)
             # just in case the insider monkey api has some form of query limit
             if wait_between_call_sec is not None:
                 sleep(wait_between_call_sec)
+            if df.iloc[0]['Date'] <= oldest_data:
+                print('Oldest date reached, looped aborted.')
+                break
             bar.update(idx)
         except Exception as e:
             print(e)
@@ -188,17 +195,17 @@ def get_insider_purchase_performance(
 
 
 def pull_data_for_tickers(
-    tickers,
-    tiingo_api_key,
-    start_date=None,
-    end_date=None,
-    save_to='',
-    check_existing=True,
+        tickers,
+        tiingo_api_key,
+        start_date=None,
+        end_date=None,
+        save_to='',
+        check_existing=True,
 ):
     """
     Persist all the available data for each of the ticker in ticker_list
     """
-
+    tickers = list(set(tickers))
     n_tickers = len(tickers)
     bar = progressbar.ProgressBar(
         maxval=n_tickers,
@@ -235,16 +242,23 @@ def pull_data_for_tickers(
         # otherwise, some data exist locally, only fetch the new dates and concatenate to the existing
         else:
             existing_data = result[ticker]
-            last_data_day = existing_data.index[-1][1].replace(tzinfo=None)
-            ticker_df = pdr.get_data_tiingo(
-                ticker,
-                start=last_data_day,
-                end=None,
-                pause=0.2,
-                api_key=config['api_key'],
-            )
-            new_ticker_data = pd.concat([existing_data, ticker_df])
-            result[ticker] = new_ticker_data
+            try:
+                last_data_day = existing_data.index[-1][1].replace(tzinfo=None)
+            except Exception as E:
+                last_data_day = None
+                print(f"Existing data for ticker is probably empty: \n {E}")
+            try:
+                ticker_df = pdr.get_data_tiingo(
+                    ticker,
+                    start=last_data_day,
+                    end=None,
+                    pause=0.2,
+                    api_key=config['api_key'],
+                )
+                new_ticker_data = pd.concat([existing_data, ticker_df])
+                result[ticker] = new_ticker_data
+            except Exception as E:
+                print(f"Error trying to get data for stock {ticker} because of exeption: \n {E}")
         bar.update(idx)
 
     bar.finish()
@@ -253,6 +267,40 @@ def pull_data_for_tickers(
 
     return result
 
+# TODO: ticker correction: remove bracket, parenthesis, name of exchange...
+# remove: OTCQB, OTC (over the counter), OTCQX, OTCBB (BB for bulleting board),  NYSE, NASDAQ, .U
+
+def split_and_take_left(ticker, if_in=(';', ':', '--', '-', ' ')):
+    for cut in if_in:
+        if cut in ticker:
+            ticker = ticker.split(cut)[0]
+    return ticker
+
+def normalize_ticker(ticker):
+    first = ticker[0]
+
+    if ticker.startswith('OTC'):
+        return normalize_ticker(ticker.split(':')[-1])
+
+    if ticker[-2] == '.':
+        return normalize_ticker(ticker[:-2])
+
+    if first in ['(', '[', '\\', '\"']:
+        return normalize_ticker(ticker[1:-1])
+
+    ticker = split_and_take_left(ticker)
+
+    return ticker
+
+def series_growth(pd_series):
+    """
+    Compute the periods growth for a series of values, i.e. the percentage gain from one period to the next. The last one
+    will always be NaN since no next one is available.
+
+    :param series: a pandas series
+    :return: a pandas series
+    """
+    return (pd_series / pd_series.shift(1) - 1).shift(-1)
 
 if __name__ == '__main__':
     api_key = myconfigs['fi.ini']['tiingo']['api']
