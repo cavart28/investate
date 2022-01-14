@@ -188,12 +188,12 @@ def get_insider_purchase_performance(
 
 
 def pull_data_for_tickers(
-        tickers,
-        tiingo_api_key,
-        start_date=None,
-        end_date=None,
-        save_to='',
-        check_existing=True,
+    tickers,
+    tiingo_api_key,
+    start_date=None,
+    end_date=None,
+    save_to='',
+    check_existing=True,
 ):
     """
     Persist all the available data for each of the ticker in ticker_list
@@ -252,6 +252,7 @@ def pull_data_for_tickers(
         pickle_dump(result, save_to)
 
     return result
+
 
 if __name__ == '__main__':
     api_key = myconfigs['fi.ini']['tiingo']['api']
