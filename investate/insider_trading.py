@@ -195,21 +195,12 @@ def get_insider_purchase_performance(
 
 
 def pull_data_for_tickers(
-<<<<<<< HEAD
         tickers,
         tiingo_api_key,
         start_date=None,
         end_date=None,
         save_to='',
         check_existing=True,
-=======
-    tickers,
-    tiingo_api_key,
-    start_date=None,
-    end_date=None,
-    save_to="",
-    check_existing=True,
->>>>>>> 0b8f4b6bb3085f0b3f50c637c0d70c321315a532
 ):
     """
     Persist all the available data for each of the ticker in ticker_list
@@ -251,7 +242,6 @@ def pull_data_for_tickers(
         # otherwise, some data exist locally, only fetch the new dates and concatenate to the existing
         else:
             existing_data = result[ticker]
-<<<<<<< HEAD
             try:
                 last_data_day = existing_data.index[-1][1].replace(tzinfo=None)
             except Exception as E:
@@ -269,18 +259,6 @@ def pull_data_for_tickers(
                 result[ticker] = new_ticker_data
             except Exception as E:
                 print(f"Error trying to get data for stock {ticker} because of exeption: \n {E}")
-=======
-            last_data_day = existing_data.index[-1][1].replace(tzinfo=None)
-            ticker_df = pdr.get_data_tiingo(
-                ticker,
-                start=last_data_day,
-                end=None,
-                pause=0.2,
-                api_key=config["api_key"],
-            )
-            new_ticker_data = pd.concat([existing_data, ticker_df])
-            result[ticker] = new_ticker_data
->>>>>>> 0b8f4b6bb3085f0b3f50c637c0d70c321315a532
         bar.update(idx)
 
     bar.finish()
@@ -323,26 +301,3 @@ def series_growth(pd_series):
     :return: a pandas series
     """
     return (pd_series / pd_series.shift(1) - 1).shift(-1)
-
-if __name__ == "__main__":
-    api_key = myconfigs["fi.ini"]["tiingo"]["api"]
-    save_to_insider = "/Users/Christian.Avart/Dropbox/py4fi_data/insider_buying.csv"
-    save_to_insider = ""
-    insider_monkey_df = get_insider_df(n_pages=3, save_to=save_to_insider)
-    # insider_monkey_df = pd.read_csv(save_to_insider)
-    # insider_monkey_df['Date'] = insider_monkey_df['Date'].apply(parse)
-    insider_monkey_df.head()
-
-    save_to_return = (
-        "/Users/Christian.Avart/Dropbox/py4fi_data/insider_buying_return.csv"
-    )
-    save_to_return = ""
-    insider_purchase_return = get_insider_purchase_performance(
-        insider_monkey_df,
-        api_key=api_key,
-        min_total_trigger=1e6,
-        length_in_days=180,
-        save_to=save_to_return,
-    )
-    # insider_purchase_return = pd.read_csv(save_to_return)
-    print(insider_purchase_return)
