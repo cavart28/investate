@@ -5,6 +5,7 @@ Module containing some of the fundamental functions to compute value of investme
 import numpy as np
 from operator import itemgetter
 
+
 def values_of_series_of_invest(
     rates_between_periods,
     invest_amounts=None,
