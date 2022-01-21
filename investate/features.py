@@ -3,6 +3,20 @@
 from investate.series_utils import parallel_sort
 import numpy as np
 
+def chunk_up_down_count(chunk, n_derivative=0):
+    """Chunk count of ups and downs"""
+    diff_chunk = np.diff(chunk, n_derivative)
+
+    first = diff_chunk[0]
+    n_up = 0
+    for second in diff_chunk[1:]:
+        if first <= second:
+            n_up += 1
+        first = second
+    n_down = len(diff_chunk) - 1 - n_up
+
+    return n_up, n_down
+
 def get_aligned_ma(
         series,
         chunk_sizes,
