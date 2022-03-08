@@ -52,7 +52,7 @@ Tools to backtest simple investing strategies
     # find the total of the investment
     total = np.array(val_A) + np.array(val_B)
     # print the total return of the original series and of the investment strategy
-    print(cut_series[-1]/cut_series[0], total[-1])
+    print(cut_series[-1] / cut_series[0], total[-1])
 """
 
 from investate.moving_average import *
@@ -160,6 +160,6 @@ def plot_mat(mat):
         square=True,
         linewidths=0.5,
         cbar_kws={"shrink": 0.5},
-    )  # annot=True, annot_kw={'font_scale': 0.1})
+    )
     plt.plot()
     plt.show()

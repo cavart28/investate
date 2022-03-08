@@ -21,7 +21,8 @@ def chunk_up_down_count(chunk, n_derivative=0):
 
 def get_aligned_ma(series, chunk_sizes, chk_funcs, pad_with=np.nan):
     """
-    Convenience function to compute and align several moving averages of a series
+    Convenience function to compute and align several moving averages of a series.
+    Possibly should be replaced with pandas rolling method
 
     >>> series = range(10)
     >>> chunk_sizes = (2, 4, 6)
@@ -59,3 +60,20 @@ def get_aligned_ma(series, chunk_sizes, chk_funcs, pad_with=np.nan):
         ]
 
     return all_stats_series
+
+config_dict = {'Tiingo': {'close': 'close',
+                          'open': 'open'}}
+
+class Volatility:
+    def __init__(self, df, data_origin='Tiingo'):
+        self.col_names = config_dict[data_origin]
+        self.df = df
+
+    def up_down_dist(self, col='close'):
+        col = self.col_names[col]
+        series = self.df[col]
+        growth = series.shift(1) / series > 1
+        growth.apply(lambda x: int(x))
+        trend_change = growth.shift(1) != growth
+        groups = trend_change.cumsum()
+        trends = self.df.groupby(groups)

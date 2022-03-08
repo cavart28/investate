@@ -15,12 +15,12 @@ import progressbar
 
 # each page has 20 rows, each is one insider purchase
 def get_insider_df(
-    n_pages=500,
-    oldest_data="2020-01-01",
-    n_per_page=20,
-    base_url="https://www.insidermonkey.com/insider-trading/purchases/",
-    save_to="",
-    wait_between_call_sec=None,
+        n_pages=500,
+        oldest_data="2020-01-01",
+        n_per_page=20,
+        base_url="https://www.insidermonkey.com/insider-trading/purchases/",
+        save_to="",
+        wait_between_call_sec=None,
 ):
     """
     Function to get insider trading info from insidermonkey.com
@@ -82,7 +82,7 @@ def get_insider_df(
 
 
 def get_ticker_data_around_date(
-    ticker: str, start_date: str, tiingo_api_key: str, end_date=None, length_in_days=180
+        ticker: str, start_date: str, tiingo_api_key: str, end_date=None, length_in_days=180
 ):
     """
     Use Tiingo to access stock basic info from the startdate until the endate (or startdate + length_in_days if enddate
@@ -135,7 +135,7 @@ def get_info_for_row(row, api_key, end_date=None, length_in_days=180):
 
 
 def get_insider_purchase_performance(
-    insider_monkey_df, api_key, min_total_trigger=1e6, length_in_days=180, save_to=""
+        insider_monkey_df, api_key, min_total_trigger=1e6, length_in_days=180, save_to=""
 ):
     """
     Go through each row of insider_monkey_df, attempt to fetch the stock stats and find the highest growth
@@ -167,7 +167,7 @@ def get_insider_purchase_performance(
                 max_val = days_after_invest_df["close"].max()
                 row_of_max = days_after_invest_df[
                     days_after_invest_df["close"] == max_val
-                ]
+                    ]
                 # determine the max growth
                 max_growth = max_val / days_after_invest_df.iloc[0]["close"] - 1
                 # the index of row_of_max is a multi-index, we extract the date from there
@@ -195,16 +195,21 @@ def get_insider_purchase_performance(
 
 
 def pull_data_for_tickers(
-    tickers,
-    tiingo_api_key,
-    start_date=None,
-    end_date=None,
-    save_to="",
-    check_existing=True,
+        tickers,
+        tiingo_api_key,
+        start_date=None,
+        end_date=None,
+        save_to="",
+        check_existing=True,
+        load_only=False
 ):
     """
     Persist all the available data for each of the ticker in ticker_list
     """
+
+    if load_only:
+        return pickle_load(save_to)
+
     tickers = list(set(tickers))
     n_tickers = len(tickers)
     bar = progressbar.ProgressBar(
@@ -235,6 +240,7 @@ def pull_data_for_tickers(
                     pause=0.2,
                     api_key=config["api_key"],
                 )
+                ticker_df.reset_index(inplace=True)
                 result[ticker] = ticker_df
             except Exception as E:
                 print(f"Unable to fetch data, exception: {E}")
@@ -255,6 +261,7 @@ def pull_data_for_tickers(
                     pause=0.2,
                     api_key=config["api_key"],
                 )
+                ticker_df.reset_index(inplace=True)
                 new_ticker_data = pd.concat([existing_data, ticker_df])
                 result[ticker] = new_ticker_data
             except Exception as E:
@@ -270,28 +277,44 @@ def pull_data_for_tickers(
     return result
 
 
-# TODO: ticker correction: remove bracket, parenthesis, name of exchange...
-# remove: OTCQB, OTC (over the counter), OTCQX, OTCBB (BB for bulleting board),  NYSE, NASDAQ, .U
+# TODO: make that a bit less hacky and also check the meaning of those extra letters, add provision
+# to do something smart when a ticker is not found...
 
-
-def split_and_take_left(ticker, if_in=(";", ":", "--", "-", " ")):
+def split_and_take_left(ticker, if_in=(";", ":", "--", "-", " ", ',')):
     for cut in if_in:
         if cut in ticker:
-            ticker = ticker.split(cut)[0]
+            ticker_slip = ticker.split(cut)
+            if len(ticker_slip) > 2:
+                ticker = ticker.split(cut)[0]
+            else:
+                if len(ticker_slip[0]) > len(ticker_slip[1]):
+                    ticker = ticker_slip[0]
+                else:
+                    ticker = ticker_slip[1]
     return ticker
 
 
-def normalize_ticker(ticker):
+def normalize_ticker(ticker, substrings_to_remove=['NASDAQ', 'NYSE']):
+    if not isinstance(ticker, str):
+        return ticker
+
     first = ticker[0]
+
+    if len(ticker) > 1:
+
+        if ticker[-2] == ".":
+            return normalize_ticker(ticker[:-2])
+
+        if first in ["(", "[", "\\", '\"']:
+            return normalize_ticker(ticker[1:-1])
 
     if ticker.startswith("OTC"):
         return normalize_ticker(ticker.split(":")[-1])
 
-    if ticker[-2] == ".":
-        return normalize_ticker(ticker[:-2])
-
-    if first in ["(", "[", "\\", '"']:
-        return normalize_ticker(ticker[1:-1])
+    for to_remove in substrings_to_remove:
+        to_remove_bt = ticker.find(to_remove)
+        if to_remove_bt != -1:
+            ticker = ticker[: to_remove_bt] + ticker[to_remove_bt + len(to_remove) + 1:]
 
     ticker = split_and_take_left(ticker)
 

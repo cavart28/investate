@@ -1,4 +1,8 @@
-"""Utils to get stock data from Quandl"""
+"""
+Utils to get stock data from Quandl. Was inspired by a naive view on financial data and not really
+appropriate for most usage. For example some data are daily and some are monthly, no effort was made at merging them
+The only possible purpose is to easily get data for several stocks into one pandas df.
+"""
 
 import quandl
 import numpy as np

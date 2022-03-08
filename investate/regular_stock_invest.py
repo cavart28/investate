@@ -1,5 +1,6 @@
 """
 Function to compute the total return of a stock by taking into account both the stock value and the dividend yield
+This is a baby function, rather use a good data source like Tiingo since there are more factors to take into account.
 
 Example of use:
 
