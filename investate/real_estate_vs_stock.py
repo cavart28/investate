@@ -27,10 +27,7 @@ from investate.series_utils import *
 
 
 def compute_mortg_principal(
-    loan_rate=0.04,
-    loan_amount=1000,
-    years_to_maturity=30,
-    n_payment_per_year=12,
+    loan_rate=0.04, loan_amount=1000, years_to_maturity=30, n_payment_per_year=12,
 ):
     """
     Compute the principal payment of a mortgage
@@ -214,43 +211,43 @@ def house_investment(
     equity = [i[0] - i[1] for i in zip(house_value, loan_remaining)]
 
     if plot:
-        plt.plot(equity, label="equity")
+        plt.plot(equity, label='equity')
         plt.vlines(
             x=n_months_repay,
             ymin=np.min(equity),
             ymax=np.max(equity),
-            label="mortgage paid off",
-            linestyles="dashed",
+            label='mortgage paid off',
+            linestyles='dashed',
             linewidth=0.5,
         )
-        plt.xlabel("months")
-        plt.ylabel("total")
+        plt.xlabel('months')
+        plt.ylabel('total')
         plt.legend()
-        plt.title(f"Equity over {mortgage_n_years + n_years_after_pay_off} years")
+        plt.title(f'Equity over {mortgage_n_years + n_years_after_pay_off} years')
         plt.show()
-        plt.plot(monthly_income, label="monthly income")
+        plt.plot(monthly_income, label='monthly income')
         plt.vlines(
             x=n_months_repay,
             ymin=np.min(monthly_income + [monthly_mort_payment]),
             ymax=np.max(monthly_income + [monthly_mort_payment]),
-            label="mortgage paid off",
-            linestyles="dashed",
+            label='mortgage paid off',
+            linestyles='dashed',
             linewidth=0.5,
         )
         plt.hlines(
             y=monthly_mort_payment,
             xmin=0,
             xmax=n_total_months,
-            label="monthly mortgage payment",
-            linestyles="dashed",
+            label='monthly mortgage payment',
+            linestyles='dashed',
             linewidth=0.5,
-            color="r",
+            color='r',
         )
-        plt.xlabel("months")
-        plt.ylabel("monthly income")
+        plt.xlabel('months')
+        plt.ylabel('monthly income')
         plt.legend()
         plt.title(
-            f"Monthly income over {mortgage_n_years + n_years_after_pay_off} years"
+            f'Monthly income over {mortgage_n_years + n_years_after_pay_off} years'
         )
         plt.show()
 
@@ -305,8 +302,8 @@ def compare_house_invest_vs_stock(
     ]
 
     if plot:
-        plt.plot(house_invest, label="house")
-        plt.plot(down_payment_invest, label="stock")
+        plt.plot(house_invest, label='house')
+        plt.plot(down_payment_invest, label='stock')
         plt.legend()
         plt.show()
 

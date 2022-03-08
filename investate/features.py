@@ -61,8 +61,9 @@ def get_aligned_ma(series, chunk_sizes, chk_funcs, pad_with=np.nan):
 
     return all_stats_series
 
-config_dict = {'Tiingo': {'close': 'close',
-                          'open': 'open'}}
+
+config_dict = {'Tiingo': {'close': 'close', 'open': 'open'}}
+
 
 class Volatility:
     def __init__(self, df, data_origin='Tiingo'):
