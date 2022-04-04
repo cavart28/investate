@@ -3,7 +3,10 @@ A few useful functions to plot financial features
 """
 import matplotlib.pyplot as plt
 
-def color_according_to_monotonicity(series, col_up='g', col_down='r', color_equal='g', start_col='g'):
+
+def color_according_to_monotonicity(
+    series, col_up='g', col_down='r', color_equal='g', start_col='g'
+):
     """Makes a series of strings of matplotlib colors depending on the monotonicity of
 
      >>> series = [1, 2, 3, 2, 3, 3]
@@ -33,10 +36,12 @@ def sparsify_and_rotate_ticks(ax, rotation=90, one_tick_every=4):
             label.set_visible(False)
 
 
-def plot_series(series,
-                col_func=color_according_to_monotonicity,
-                plot_kwargs={'kind': 'bar'},
-                ax_func=sparsify_and_rotate_ticks):
+def plot_series(
+    series,
+    col_func=color_according_to_monotonicity,
+    plot_kwargs={'kind': 'bar'},
+    ax_func=sparsify_and_rotate_ticks,
+):
     my_colors = col_func(series)
     ax = series.plot(**plot_kwargs, color=my_colors)
     ax_func(ax)
@@ -44,14 +49,14 @@ def plot_series(series,
 
 
 def plot_lines(
-        ax,
-        lines_loc,
-        label=None,
-        color='r',
-        line_width=0.5,
-        line_style='-',
-        line_type='vert',
-        alpha=1,
+    ax,
+    lines_loc,
+    label=None,
+    color='r',
+    line_width=0.5,
+    line_style='-',
+    line_type='vert',
+    alpha=1,
 ):
     """
     Function to draw vertical or horizontal lines on an ax

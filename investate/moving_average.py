@@ -87,12 +87,7 @@ def moving_stats(series, chk_size, chk_step=1, chk_func=np.mean):
 
 
 def get_comp_ma(
-    series,
-    chk_size_1,
-    chk_size_2,
-    chk_step=1,
-    chk_func_1=np.mean,
-    chk_func_2=np.mean,
+    series, chk_size_1, chk_size_2, chk_step=1, chk_func_1=np.mean, chk_func_2=np.mean,
 ):
     """
     Convenience function to compute and align the moving average of a series
@@ -112,11 +107,11 @@ def get_comp_ma(
     )
 
     return {
-        "stat_series_1": np.array(stat_series_1),
-        "stat_series_2": np.array(stat_series_2),
-        "cut_series": np.array(series[chk_size_2 - 1 :]),
-        "chk_size_1": chk_size_1,
-        "chk_size_2": chk_size_2,
+        'stat_series_1': np.array(stat_series_1),
+        'stat_series_2': np.array(stat_series_2),
+        'cut_series': np.array(series[chk_size_2 - 1 :]),
+        'chk_size_1': chk_size_1,
+        'chk_size_2': chk_size_2,
     }
 
 
@@ -127,9 +122,9 @@ def plot_mas(stat_series_1, stat_series_2, cut_series, chk_size_1, chk_size_2):
 
     fig, ax = plt.subplots(nrows=1, ncols=1)
 
-    ax.plot(stat_series_1, label=f"ma_{chk_size_1}", linewidth=0.5)
-    ax.plot(stat_series_2, label=f"ma_{chk_size_2}", linewidth=0.5)
-    ax.plot(cut_series[:], label=f"series", linewidth=0.8)
+    ax.plot(stat_series_1, label=f'ma_{chk_size_1}', linewidth=0.5)
+    ax.plot(stat_series_2, label=f'ma_{chk_size_2}', linewidth=0.5)
+    ax.plot(cut_series[:], label=f'series', linewidth=0.8)
     ax.legend()
 
     return fig, ax

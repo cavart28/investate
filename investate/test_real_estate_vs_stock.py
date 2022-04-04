@@ -5,30 +5,21 @@ from investate.real_estate_vs_stock import *
 
 
 @pytest.mark.parametrize(
-    "rate_between_amounts,invest_amounts,final_only,invest_at_begining_of_period",
-    [
-        ([0], [0.2], True, False),
-        ([0, 0], [0.2, 0.05], True, False),
-    ],
+    'rate_between_amounts,invest_amounts,final_only,invest_at_begining_of_period',
+    [([0], [0.2], True, False), ([0, 0], [0.2, 0.05], True, False),],
 )
 def test_values_of_series_of_invest(
-    invest_amounts,
-    rate_between_amounts,
-    final_only,
-    invest_at_begining_of_period,
+    invest_amounts, rate_between_amounts, final_only, invest_at_begining_of_period,
 ):
     """Testing that investing no money results in well, no money"""
     res = values_of_series_of_invest(
-        invest_amounts,
-        rate_between_amounts,
-        final_only,
-        invest_at_begining_of_period,
+        invest_amounts, rate_between_amounts, final_only, invest_at_begining_of_period,
     )
     assert res == 0
 
 
 @pytest.mark.parametrize(
-    "loan_rate,loan_amount,years_to_maturity,n_payment_per_year",
+    'loan_rate,loan_amount,years_to_maturity,n_payment_per_year',
     [
         (0.1, 200, 10, 12),
         (0.2, 100, 20, 12),

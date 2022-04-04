@@ -7,6 +7,7 @@
    module_docs/investate/file_utils
    module_docs/investate/insider_trading
    module_docs/investate/moving_average
+   module_docs/investate/plotting
    module_docs/investate/quandl_data
    module_docs/investate/real_estate_vs_stock
    module_docs/investate/regular_stock_invest
