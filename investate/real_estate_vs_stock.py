@@ -123,6 +123,7 @@ def inflation_adjust(month_costs_gen, yearly_infl_rate=0.02):
 
 # TODO: each variable is beneficial or not, take that into account to allow ranges
 
+
 def house_investment(
     mortg_rate=0.0275,
     down_payment_perc=0.2,
