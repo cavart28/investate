@@ -2,13 +2,17 @@
 
 from collections import defaultdict
 
+
 def defaultdict_of_depth(depth, default_func=list):
     """Create a default dict with default dict as default type, of any recursive depth"""
     if depth == 1:
         return defaultdict(default_func)
     else:
-        func = defaultdict_of_depth(depth - 1, lambda: defaultdict_of_depth(1, default_func))
+        func = defaultdict_of_depth(
+            depth - 1, lambda: defaultdict_of_depth(1, default_func)
+        )
         return func
+
 
 import os
 import datetime
@@ -64,8 +68,7 @@ def add_frame_to_workbook(filename, tabname, dataframe):
         writer.book = load_workbook(filename)
 
         # copy existing sheets
-        writer.sheets = dict(
-            (ws.title, ws) for ws in writer.book.worksheets)
+        writer.sheets = dict((ws.title, ws) for ws in writer.book.worksheets)
     except IOError:
         # file does not exist yet, we will create it
         pass
@@ -92,13 +95,11 @@ def make_file_df(root_dir, extension='.wav'):
     dict_for_df = defaultdict(list)
     n_folders = 0
 
-    for full_path in glob.iglob(root_dir + f'/**/*{extension}',
-                                recursive=True):
+    for full_path in glob.iglob(root_dir + f'/**/*{extension}', recursive=True):
         if len(full_path.split('/')) > n_folders:
             n_folders = len(full_path.split('/')) - 1
 
-    for full_path in glob.iglob(root_dir + f'/**/*{extension}',
-                                recursive=True):
+    for full_path in glob.iglob(root_dir + f'/**/*{extension}', recursive=True):
         split = full_path.split('/')
         dict_for_df['filename'].append(split[-1])
         dict_for_df['full_path'].append(full_path)
@@ -112,11 +113,12 @@ def make_file_df(root_dir, extension='.wav'):
 
 from datetime import datetime
 
+
 def ts_to_date_string(ts, div=1e3):
     t = datetime.fromtimestamp(ts / div)
     return '{:%Y-%m-%d %H:%M:%S}'.format(t)
 
 
 def date_string_to_ts(date_string):
-    element = datetime.strptime(date_string, "%Y-%m-%d%H:%M:%S")
+    element = datetime.strptime(date_string, '%Y-%m-%d%H:%M:%S')
     return datetime.timestamp(element) * 1000
