@@ -15,3 +15,4 @@
    module_docs/investate/streamlit_house_app
    module_docs/investate/test_real_estate_vs_stock
    module_docs/investate/trends
+   module_docs/investate/utils
