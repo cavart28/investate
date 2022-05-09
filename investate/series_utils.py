@@ -189,6 +189,7 @@ def rebalance_A_to_B(A, B, target_relative_weight, transfer_fee):
     >>> transfer_amount = rebalance_A_to_B(a, b, target_ratio, fee_percent)
     >>> print(transfer_amount)
     5.012531328320802
+
     >>> new_a = a - transfer_amount
     >>> new_b = b + transfer_amount * (1 - fee_percent) # a portion of the transferred money is lost due to the fees
     >>> new_ratio = new_a / (new_a + new_b)

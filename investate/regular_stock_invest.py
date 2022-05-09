@@ -20,7 +20,9 @@ def get_total_return_from_monthly_data(
     end_date='2021-03-01',
     remove_begining=True,
 ):
-    """Attempt at getting the full return of a stock if dividends are reinvested"""
+    """
+    Attempt at getting the full return of a stock if dividends are reinvested. Using a good data source
+    like tiingo is more relialable at this point"""
     ticks_dicts = {'price': price_tick, 'dividends': dividend_tick}
     df = make_df_from_ticks(
         ticks_dicts=ticks_dicts, start_date=start_date, end_date=end_date

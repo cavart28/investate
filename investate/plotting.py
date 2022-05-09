@@ -2,6 +2,7 @@
 A few useful functions to plot financial features
 """
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def color_according_to_monotonicity(
@@ -101,3 +102,9 @@ def plot_lines(
         label = None
 
     return ax
+
+
+def plot_growth_dist(frq, edges):
+    fig, ax = plt.subplots()
+    ax.bar(edges[:-1], frq, width=np.diff(edges), edgecolor="black", align="edge")
+    plt.show()

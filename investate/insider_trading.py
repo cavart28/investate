@@ -322,12 +322,4 @@ def normalize_ticker(ticker, substrings_to_remove=['NASDAQ', 'NYSE']):
     return ticker
 
 
-def series_growth(pd_series):
-    """
-    Compute the periods growth for a series of values, i.e. the percentage gain from one period to the next. The last one
-    will always be NaN since no next one is available.
 
-    :param series: a pandas series
-    :return: a pandas series
-    """
-    return (pd_series / pd_series.shift(1) - 1).shift(-1)
