@@ -1,14 +1,11 @@
 """Script to pull insider data from insidermonkey.com"""
 import datetime
-
 import requests
-import pandas as pd
 from time import sleep
 from dateutil.parser import *
 from dateutil.relativedelta import *
 from tiingo import TiingoClient
 import pandas_datareader as pdr
-from py2store import myconfigs
 from investate.file_utils import *
 import progressbar
 

@@ -1,3 +1,6 @@
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 """
 Tools to backtest simple investing strategies
 

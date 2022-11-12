@@ -9,8 +9,6 @@ from investate.real_estate_vs_stock import (
     compare_house_invest_vs_stock,
     compute_mortg_principal,
 )
-import matplotlib.pyplot as plt
-import numpy as np
 
 st.title('House vs other investment')
 
