@@ -1,17 +1,14 @@
 """Useful and general tools"""
 
-import pandas as pd
 from collections import defaultdict
 from datetime import datetime
-import time
 import os
 import datetime
-from matplotlib.backends.backend_pdf import PdfPages
 from PyPDF2 import PdfFileMerger, PdfFileReader
 import pandas as pd
 from openpyxl import load_workbook
-import pickle
-import glob
+import smtplib
+import email.message
 
 
 def defaultdict_of_depth(depth, default_func=list):
@@ -25,9 +22,14 @@ def defaultdict_of_depth(depth, default_func=list):
         return func
 
 
-def ts_to_date_string(ts, div=1e3):
-    t = datetime.fromtimestamp(ts / div)
-    return '{:%Y-%m-%d %H:%M:%S}'.format(t)
+class keydefaultdict(defaultdict):
+    """Similar to a default dict except that the default value is a function of the key"""
+
+    def __init__(self, key_func):
+        self.key_func = key_func
+
+    def __missing__(self, key):
+        return self.key_func(key)
 
 
 def merge_pdf_in_folder(directory_path, output_name='combined_pdf.pdf', delete=False):
@@ -80,13 +82,36 @@ def add_frame_to_workbook(filename, tabname, dataframe):
         pass
 
 
-def ts_to_date_string(ts, div=1e3):
-    t = datetime.fromtimestamp(ts / div)
-    return '{:%Y-%m-%d %H:%M:%S}'.format(t)
-
-
 def date_string_to_ts(date_string):
     element = datetime.strptime(date_string, '%Y-%m-%d%H:%M:%S')
     return datetime.timestamp(element) * 1000
 
 
+def ts_to_date_string(ts, div=1e3):
+    t = datetime.fromtimestamp(ts / div)
+    return '{:%Y-%m-%d %H:%M:%S}'.format(t)
+
+
+def send_email(subject,
+               content,
+               recipients,
+               username,
+               password,
+               from_email=None):
+    if from_email is None:
+        from_email = username
+    m = email.message.Message()
+    m['From'] = from_email
+    m['To'] = recipients
+    m['Subject'] = subject
+    m.set_payload(content);
+
+    try:
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(username, password)
+        server.sendmail(m['From'], m['To'], m.as_string())
+        server.quit()
+        print('email sent')
+    except Exception as e:
+        print('email not sent, {}'.format(e))

@@ -3,7 +3,26 @@ A few useful functions to plot financial features
 """
 import matplotlib.pyplot as plt
 import numpy as np
+import random
+from collections import defaultdict
+def random_rgb(rand_func=random):
+    return (rand_func(), rand_func(), rand_func())
 
+
+def consistent_random_color(sequence,
+                            color_func=random_rgb):
+    """
+    Choose a random color for each element of the sequence, but where two equal element gets the same color
+
+    >>> colors = consistent_random_color(['a', 'a', 'b'])
+    >>> assert colors[0] == colors[1] != colors[2]
+    """
+    random.seed(10)
+    colors = defaultdict(color_func)
+    color_seq = []
+    for i in sequence:
+        color_seq.append(colors[i])
+    return color_seq
 
 def color_according_to_monotonicity(
     series, col_up='g', col_down='r', color_equal='g', start_col='g'

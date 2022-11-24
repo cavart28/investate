@@ -282,7 +282,7 @@ def investment_over_period(
         val_A.append(total_A)
         val_B.append(total_B)
 
-    return val_A, val_B
+    return np.array(val_A), np.array(val_B)
 
 
 def parallel_sort(iterable_list, sort_idx=0):

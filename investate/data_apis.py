@@ -10,18 +10,19 @@ myconfigs = configparser.ConfigParser()
 myconfigs.read(config_path)
 
 # see https://algotrading101.com/learn/robinhood-api-guide/
-robin_config = myconfigs['robin']
-r.login(username=robin_config['user'],
-        password=robin_config['password'],
-        expiresIn=86400,
-        by_sms=True)
+def login_robinhod():
+    robin_config = myconfigs['robin']
+    r.login(username=robin_config['user'],
+            password=robin_config['password'],
+            expiresIn=86400,
+            by_sms=True)
 
 # Tiingo api setup
 # https://tiingo-python.readthedocs.io/en/latest/readme.html#usage
 tiingo_config = {}
 tiingo_config['session'] = True
 tiingo_config['api_key'] = myconfigs['tiingo']['api']
-client = TiingoClient(tiingo_config)
+tiingo_client = TiingoClient(tiingo_config)
 
 
 # Example of getting intraday data with Tiingo
@@ -42,6 +43,6 @@ iex_token = myconfigs['iex']['token']
 iex_workspace = myconfigs['iex']['workspace']
 
 # Example url:
-url = f'https://cloud.iexapis.com/stable/tops?token={iex_token}&symbols=aapl'
-response = requests.get(url)
-response.content
+# url = f'https://cloud.iexapis.com/stable/tops?token={iex_token}&symbols=aapl'
+# response = requests.get(url)
+# response.content
