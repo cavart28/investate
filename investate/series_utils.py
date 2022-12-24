@@ -303,3 +303,17 @@ def parallel_sort(iterable_list, sort_idx=0):
     z = zip(*iterable_list)
     sorted_z = [item for item in sorted(z, key=itemgetter(sort_idx))]
     return list(zip(*sorted_z))
+
+
+def monotonicity_score(values):
+    """
+    Return the proportion of times a series of values goes up from one to the next.
+    Max score is 1 for a monotonous up series and min score is zero for a strictly down
+    series
+    """
+    values = np.array(values)
+    diffs = np.diff(values)
+    sum_abs_diff = np.sum(np.abs(diffs))
+    pos = np.where(diffs >= 0)
+    total_pos = np.sum(diffs[pos])
+    return total_pos / sum_abs_diff

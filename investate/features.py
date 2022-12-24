@@ -36,7 +36,7 @@ def chunker(iterable, chk_size, chk_step=1):
         d.extend(to_add)
 
 
-def moving_stats(series, chk_size, chk_step=1, chk_func=np.mean):
+def moving_stats(series, chk_size, chk_step=1, chk_func=np.mean, pad=None):
     """
     Compute the moving averages of the series (or moving stats more generally), where winsize is the size of the
     windows and win_func the function computing the stat for each of them.
@@ -52,26 +52,29 @@ def moving_stats(series, chk_size, chk_step=1, chk_func=np.mean):
 
 
     >>> series = range(10)
-    >>> list(moving_stats(series, chk_size=2, chk_func=np.mean))
+    >>> moving_stats(series, chk_size=2, chk_func=np.mean)
     [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5]
 
     The size of the series outputed with the default step of size 1 is always len(series) - chk_size + 1
 
     >>> chk_size, series_length = 12, 100
     >>> series = range(series_length)
-    >>> assert len(list(moving_stats(series, chk_size=chk_size))) == series_length - chk_size + 1, 'something is wrong!'
+    >>> assert len(moving_stats(series, chk_size=chk_size)) == series_length - chk_size + 1, 'something is wrong!'
 
     One can compute more complicated moving averages by using various win_func
 
     >>> series = range(10)
     >>> chk_size = 2
     >>> chk_func = lambda x: np.mean(np.array(x) * np.array([0.1] * chk_size))
-    >>> list(moving_stats(series, chk_size=chk_size, chk_func=chk_func))
+    >>> moving_stats(series, chk_size=chk_size, chk_func=chk_func)
     [0.05, 0.15000000000000002, 0.25, 0.35000000000000003, 0.45, 0.55, 0.6500000000000001, 0.75, 0.8500000000000001]
     """
 
     chunks = chunker(series, chk_size, chk_step)
-    return map(chk_func, chunks)
+    stats = list(map(chk_func, chunks))
+    if pad is not None:
+        stats = [pad] * (chk_size - 1) + stats
+    return stats
 
 
 def window_up_down_count(window, n_derivative=0):
