@@ -10,7 +10,13 @@ import pandas_datareader as pdr
 
 import pandas as pd
 
-config_path = '/Users/cavart/fi.ini'
+
+DFLT_SOURCE_DIR = os.path.expanduser('~/invest')
+# TODO: Do we want the following, or something like it?
+# if not os.path.isdir(DFLT_SOURCE_DIR):
+#     os.mkdir(DFLT_SOURCE_DIR)
+
+config_path = os.path.expanduser('~/fi.ini')
 myconfigs = configparser.ConfigParser()
 myconfigs.read(config_path)
 
@@ -29,6 +35,10 @@ def login_robinhod():
 tiingo_config = {}
 tiingo_config['session'] = True
 tiingo_config['api_key'] = myconfigs['tiingo']['api']
+
+if 'TIINGO_API_KEY' not in os.environ:
+    os.environ['TIINGO_API_KEY'] = tiingo_config['api_key']
+
 tiingo_client = TiingoClient(tiingo_config)
 
 
@@ -89,7 +99,7 @@ allowed_suffix = ['_daily', '_1min', '_5min', '_yearly']
 def fetch_data_and_cache(ticker,
                          start,
                          end,
-                         source,
+                         source=None,
                          append_to_path='_daily',
                          fetch_func=pdr.get_data_tiingo,
                          date_col_name='date',
@@ -113,6 +123,8 @@ def fetch_data_and_cache(ticker,
     terms. To see the problem, print the  query around line 136 (or debug) and not that they are correct
     yet the results of fetch_func contains redundant rows when fetch_func is get_intraday_data""
     """
+
+    source = source or DFLT_SOURCE_DIR
 
     assert append_to_path in allowed_suffix, f"Your suffix must be in allowed_suffix," \
                                              f" either comply or extend allowed_suffix if a new one is warranted"
