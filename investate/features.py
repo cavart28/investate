@@ -216,20 +216,3 @@ def series_growth(pd_series):
     """
     return (pd_series / pd_series.shift(1) - 1).shift(-1)
 
-
-config_dict = {'Tiingo': {'close': 'close', 'open': 'open'}}
-
-
-class Volatility:
-    def __init__(self, df, data_origin='Tiingo'):
-        self.col_names = config_dict[data_origin]
-        self.df = df
-
-    def up_down_dist(self, col='close'):
-        col = self.col_names[col]
-        series = self.df[col]
-        growth = series.shift(1) / series > 1
-        growth.apply(lambda x: int(x))
-        trend_change = growth.shift(1) != growth
-        groups = trend_change.cumsum()
-        trends = self.df.groupby(groups)

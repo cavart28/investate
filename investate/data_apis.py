@@ -83,6 +83,9 @@ def normalize_to_utc_pd_timestamp(date):
 
 
 # TODO: Remove the pandas depreciation warning?
+# TODO: figure out why an index column is created and remove that, it is annoying
+allowed_suffix = ['_daily', '_1min', '_5min', '_yearly']
+
 def fetch_data_and_cache(ticker,
                          start,
                          end,
@@ -91,6 +94,7 @@ def fetch_data_and_cache(ticker,
                          fetch_func=pdr.get_data_tiingo,
                          date_col_name='date',
                          drop_duplicates=False,
+                         allowed_suffix=allowed_suffix,
                          **fetch_func_kwargs):
     """
     Get ticker data using the tiingo api (by default) if the data does not already exist locally in the source folder.
@@ -110,6 +114,8 @@ def fetch_data_and_cache(ticker,
     yet the results of fetch_func contains redundant rows when fetch_func is get_intraday_data""
     """
 
+    assert append_to_path in allowed_suffix, f"Your suffix must be in allowed_suffix," \
+                                             f" either comply or extend allowed_suffix if a new one is warranted"
     existing_files = os.listdir(source)
     existing_tickers_and_freq_str = [f[:-4] for f in existing_files]
     ticker_and_freq_str = ticker + append_to_path

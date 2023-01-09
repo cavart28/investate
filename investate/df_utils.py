@@ -54,6 +54,11 @@ def get_dates_overlap(dfs, date_col_names='date'):
 
 
 def date_align_dfs(dfs, date_col_names='date'):
+    """
+    Return the sub-dfs of the dfs where only the common dates are kept. This is intended to use with dfs
+    which have slightly different dates, typically holidays for one exchange that wasn't one for another
+    """
+
     if isinstance(date_col_names, str):
         date_col_names = [date_col_names] * len(dfs)
     else:
