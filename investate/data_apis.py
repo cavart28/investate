@@ -96,6 +96,7 @@ def normalize_to_utc_pd_timestamp(date):
 # TODO: figure out why an index column is created and remove that, it is annoying
 allowed_suffix = ['_daily', '_1min', '_5min', '_yearly']
 
+
 def fetch_data_and_cache(ticker,
                          start,
                          end,
