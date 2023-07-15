@@ -13,6 +13,7 @@ plot_mas(**get_comp_ma(series, chk_size_1=10, chk_size_2=20, chk_step=1, chk_fun
 import numpy as np
 from investate.features import moving_stats
 import matplotlib.pyplot as plt
+
 def get_comp_ma(
     series, chk_size_1, chk_size_2, chk_step=1, chk_func_1=np.mean, chk_func_2=np.mean,
 ):

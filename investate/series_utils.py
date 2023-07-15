@@ -317,3 +317,41 @@ def monotonicity_score(values):
     pos = np.where(diffs >= 0)
     total_pos = np.sum(diffs[pos])
     return total_pos / sum_abs_diff
+
+
+
+def find_subintervals(intervals):
+    """
+    Break a list of overlapping intervals into a list of non-overlapping intervals by breaking the overlapping
+    intervals into subintervals.
+    It keeps track of which intervals contributed to each subinterval. The complexity is n*log(n):
+    sorting plus one pass over the left/right points
+
+    >>> find_subintervals([[1, 10], [2,5] ,[3, 20]])
+    [(1, 2, {0}), (2, 3, {0, 1}), (3, 5, {0, 1, 2}), (5, 10, {0, 2}), (10, 20, {2})]
+
+    >>> find_subintervals([[1, 10], [10, 20]])
+    [(1, 10, {0}), (10, 20, {1})]
+    """
+
+    # get left and right endpoints of all intervals
+    lefts, rights = zip(*intervals)
+    # tag each end point with the index of the interval it belongs to
+    ordered_and_typed = sorted([(val, i) for i, val in enumerate(lefts)] + [(val, i) for i, val in enumerate(rights)],
+                               key=lambda x: x[0])
+    subintervals = list()
+    running_type_set = set()
+    previous_val = None
+    # a new subinterval is created at each new point if the set of intervals that are currently running is not empty
+    for val, type_ in ordered_and_typed:
+        # we disregard intervals of the form [a, a] due to python convention that those would be empty,
+        # thus the second condition
+        if len(running_type_set) > 0 and previous_val != val:
+            subintervals.append((previous_val, val, running_type_set.copy()))
+        if type_ in running_type_set:
+            running_type_set.remove(type_)
+        else:
+            running_type_set.add(type_)
+        previous_val = val
+
+    return subintervals
