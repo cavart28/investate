@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-RUN git clone https://github.com/cavart28/investate
+# Place the streamlit app in app/ and this command copies it into
+# the image
 COPY . .
 
 RUN pip3 install pandas
