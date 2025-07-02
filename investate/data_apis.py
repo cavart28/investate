@@ -10,11 +10,11 @@ import pandas_datareader as pdr
 
 import pandas as pd
 
+def mkdir_if_missing(folder_path):
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
 
 DFLT_SOURCE_DIR = os.path.expanduser('~/invest')
-# TODO: Do we want the following, or something like it?
-# if not os.path.isdir(DFLT_SOURCE_DIR):
-#     os.mkdir(DFLT_SOURCE_DIR)
 
 config_path = os.path.expanduser('~/fi.ini')
 myconfigs = configparser.ConfigParser()
@@ -125,6 +125,7 @@ def fetch_data_and_cache(ticker,
     """
 
     source = source or DFLT_SOURCE_DIR
+    mkdir_if_missing(source)
 
     assert append_to_path in allowed_suffix, f"Your suffix must be in allowed_suffix," \
                                              f" either comply or extend allowed_suffix if a new one is warranted"
@@ -189,7 +190,7 @@ def fetch_data_and_cache(ticker,
 def fetch_data_and_cache_repeatively(ticker,
                                      start,
                                      end,
-                                     source,
+                                     source=None,
                                      append_to_path='_daily',
                                      fetch_func=pdr.get_data_tiingo,
                                      date_col_name='date',
@@ -203,6 +204,10 @@ def fetch_data_and_cache_repeatively(ticker,
     or if the query dates are weekend/holidays. There could be other reasons, the point here it to make sure the
     function terminates.
     """
+
+    source = source or DFLT_SOURCE_DIR
+    mkdir_if_missing(source)
+
     ticker_df = fetch_data_and_cache(ticker,
                                      start,
                                      end,
@@ -215,6 +220,7 @@ def fetch_data_and_cache_repeatively(ticker,
 
     existing_start = normalize_to_utc_pd_timestamp(ticker_df.date.iloc[0])
     existing_end = normalize_to_utc_pd_timestamp(ticker_df.date.iloc[-1])
+    print(existing_end, existing_start)
     start = normalize_to_utc_pd_timestamp(start)
     end = normalize_to_utc_pd_timestamp(end)
 
@@ -244,3 +250,6 @@ def fetch_data_and_cache_repeatively(ticker,
             tries += 1
 
     return ticker_df.drop_duplicates('date')
+
+
+

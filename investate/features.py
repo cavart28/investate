@@ -95,7 +95,9 @@ def window_up_down_count(window, n_derivative=0):
 def get_aligned_ma(series, chunk_sizes, chk_funcs, pad_with=np.nan):
     """
     Convenience function to compute and align several moving averages of a series.
-    Possibly should be replaced with pandas rolling method
+    Possibly should be replaced with pandas rolling method.
+    General and convenient but in most case much faster case specific versions can be coded.
+    (for example when chk_funcs is the mean, std, sorted, max...)
 
     >>> series = range(10)
     >>> chunk_sizes = (2, 4, 6)
